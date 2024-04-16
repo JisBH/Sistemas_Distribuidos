@@ -111,28 +111,24 @@ void MostrarLibro(TLibro *L, int Pos, bool_t Cabecera)
 	Formatea(PI, B, 28, ' ');
 	printf("%-5d%s%-*s%*d%*d%*d\n", Pos + 1, T, 18, L->Isbn, 4, L->NoLibros, 4, L->NoPrestados, 4, L->NoListaEspera);
 	printf("     %s%s%-*d\n", A, PI, 12, L->Anio);
+	printf("\n");
 }
 
-int *func_conexion(CLIENT *clnt)
+int *func_conexion(Cadena contraseña, CLIENT *clnt)
 {
 	int *result_1_puntero;
-	Cadena contraseña = "1234";
 
 	result_1_puntero = conexion_1(contraseña, clnt);
 	if (result_1_puntero == (int *)NULL)
 	{
-		clnt_perror(clnt, "call failed");
+		printf("Error al conectarse con el servidor\n");
 		*result_1_puntero = 0;
 	}
-	else
-	{
-		printf("Numero que devuelve la funcion conexion %d\n", *result_1_puntero);
-	}
-	sleep(1);
+
 	return result_1_puntero;
 }
 
-void func_desconexion(int *result_1_puntero, CLIENT *clnt)
+bool_t func_desconexion(int *result_1_puntero, CLIENT *clnt)
 {
 
 	bool_t *result_2_puntero;
@@ -141,39 +137,31 @@ void func_desconexion(int *result_1_puntero, CLIENT *clnt)
 	result_2_puntero = desconexion_1(&desconexion_arg, clnt);
 	if (result_2_puntero == (bool_t *)NULL)
 	{
-		clnt_perror(clnt, "call failed");
-	}
-	else
-	{
-		printf("Numero que devuelve la funcion desconexion %d\n", *result_2_puntero);
+		printf("Error al desconectarse del servidor\n");
+		*result_2_puntero = FALSE;
 	}
 
-	sleep(1);
+	return *result_2_puntero;
 }
 
-void func_cargar_datos(int *result_1_puntero, CLIENT *clnt)
+int *func_cargar_datos(int *result_1_puntero, Cadena nom_fich, CLIENT *clnt)
 {
 
 	int *result_3_puntero;
 	TConsulta cargardatos_1_arg;
 	cargardatos_1_arg.Ida = *result_1_puntero;
-	strcpy(cargardatos_1_arg.Datos, "Biblioteca.cdat");
+	strcpy(cargardatos_1_arg.Datos, nom_fich);
 
 	result_3_puntero = cargardatos_1(&cargardatos_1_arg, clnt);
 	if (result_3_puntero == (int *)NULL)
 	{
-		clnt_perror(clnt, "call failed");
-		printf("error en primer cargar datos\n");
+		printf("Error al cargar datos\n");
+		*result_3_puntero = -2;
 	}
-	else
-	{
-		printf("Numero que devuelve la funcion cargardatos %d\n", *result_3_puntero);
-	}
-
-	sleep(1);
+	return result_3_puntero;
 }
 
-void func_guardar_datos(int *result_1_puntero, CLIENT *clnt)
+bool_t *func_guardar_datos(int *result_1_puntero, CLIENT *clnt)
 {
 
 	bool_t *result_4_puntero;
@@ -182,109 +170,89 @@ void func_guardar_datos(int *result_1_puntero, CLIENT *clnt)
 	result_4_puntero = guardardatos_1(&guardardatos_1_arg, clnt);
 	if (result_4_puntero == (bool_t *)NULL)
 	{
-		clnt_perror(clnt, "call failed");
-	}
-	else
-	{
-		printf("Numero que devuelve la funcion guardardatos %d\n", *result_4_puntero);
+		printf("Error al guardar los datos\n");
 	}
 
-	sleep(1);
+	return result_4_puntero;
 }
 
-void func_nuevo_libro(int *result_1_puntero, CLIENT *clnt)
+int *func_nuevo_libro(int *result_1_puntero, TLibro libro, CLIENT *clnt)
 {
 
 	int *result_5_puntero;
 	TNuevo nuevolibro_1_arg;
 	nuevolibro_1_arg.Ida = *result_1_puntero;
-	strcpy(nuevolibro_1_arg.Libro.Isbn, "1234");
-	strcpy(nuevolibro_1_arg.Libro.Titulo, "Esto es un titulo de prueba");
-	strcpy(nuevolibro_1_arg.Libro.Autor, "Jesus");
-	nuevolibro_1_arg.Libro.Anio = 2024;
-	strcpy(nuevolibro_1_arg.Libro.Pais, "Espana");
-	strcpy(nuevolibro_1_arg.Libro.Idioma, "Espanol");
-	nuevolibro_1_arg.Libro.NoLibros = 1;
-	nuevolibro_1_arg.Libro.NoListaEspera = 2;
-	nuevolibro_1_arg.Libro.NoPrestados = 0;
+	strcpy(nuevolibro_1_arg.Libro.Isbn, libro.Isbn);
+	strcpy(nuevolibro_1_arg.Libro.Titulo, libro.Titulo);
+	strcpy(nuevolibro_1_arg.Libro.Autor, libro.Autor);
+	nuevolibro_1_arg.Libro.Anio = libro.Anio;
+	strcpy(nuevolibro_1_arg.Libro.Pais, libro.Pais);
+	strcpy(nuevolibro_1_arg.Libro.Idioma, libro.Idioma);
+	nuevolibro_1_arg.Libro.NoLibros = libro.NoLibros;
+	nuevolibro_1_arg.Libro.NoListaEspera = libro.NoListaEspera;
+	nuevolibro_1_arg.Libro.NoPrestados = libro.NoPrestados;
 
 	result_5_puntero = nuevolibro_1(&nuevolibro_1_arg, clnt);
 	if (result_5_puntero == (int *)NULL)
 	{
-		clnt_perror(clnt, "call failed");
-		printf("error en nuevo libro\n");
-	}
-	else
-	{
-		printf("Numero que devuelve la funcion nuevolibro %d\n", *result_5_puntero);
+		printf("Error en nuevo libro\n");
+		*result_5_puntero = -2;
 	}
 
-	sleep(1);
+	return result_5_puntero;
 }
 
-void func_comprar_libros(int *result_1_puntero, CLIENT *clnt)
+int *func_comprar_libros(int *result_1_puntero, int nlibros, Cadena isbn, CLIENT *clnt)
 {
 
 	int *result_6_puntero;
 	TComRet comprar_1_arg;
 	comprar_1_arg.Ida = *result_1_puntero;
-	strcpy(comprar_1_arg.Isbn, "1234");
-	comprar_1_arg.NoLibros = 5;
+	strcpy(comprar_1_arg.Isbn, isbn);
+	comprar_1_arg.NoLibros = nlibros;
 
 	result_6_puntero = comprar_1(&comprar_1_arg, clnt);
 	if (result_6_puntero == (int *)NULL)
 	{
-		clnt_perror(clnt, "call failed");
+		printf("Error intentando comprar libros\n");
 	}
-	else
-	{
-		printf("Numero que devuelve la funcion comprar %d\n", *result_6_puntero);
-	}
-	sleep(1);
+	return result_6_puntero;
 }
 
-void func_retirar_libros(int *result_1_puntero, CLIENT *clnt)
+int *func_retirar_libros(int *result_1_puntero, int nlibros, Cadena isbn, CLIENT *clnt)
 {
 
 	int *result_7_puntero;
 	TComRet retirar_1_arg;
 	retirar_1_arg.Ida = *result_1_puntero;
-	strcpy(retirar_1_arg.Isbn, "1234");
-	retirar_1_arg.NoLibros = 3;
+	strcpy(retirar_1_arg.Isbn, isbn);
+	retirar_1_arg.NoLibros = nlibros;
 
 	result_7_puntero = retirar_1(&retirar_1_arg, clnt);
 	if (result_7_puntero == (int *)NULL)
 	{
-		clnt_perror(clnt, "call failed");
+		printf("Error intentando retirar libros\n");
 	}
-	else
-	{
-		printf("Numero que devuelve la funcion retirar %d\n", *result_7_puntero);
-	}
-	sleep(1);
+	return result_7_puntero;
 }
 
-void func_ordenar(int *result_1_puntero, CLIENT *clnt)
+bool_t *func_ordenar(int *result_1_puntero, int ordenacion, CLIENT *clnt)
 {
 
 	bool_t *result_8_puntero;
 	TOrdenacion ordenar_1_arg;
 	ordenar_1_arg.Ida = *result_1_puntero;
-	ordenar_1_arg.Campo = 0;
+	ordenar_1_arg.Campo = ordenacion;
 
 	result_8_puntero = ordenar_1(&ordenar_1_arg, clnt);
 	if (result_8_puntero == (bool_t *)NULL)
 	{
-		clnt_perror(clnt, "call failed");
+		printf("Error intentando ordenar los libros\n");
 	}
-	else
-	{
-		printf("Numero que devuelve la funcion ordenar %d\n", *result_8_puntero);
-	}
-	sleep(1);
+	return result_8_puntero;
 }
 
-void func_nlibros(int *result_1_puntero, CLIENT *clnt)
+int func_nlibros(int *result_1_puntero, CLIENT *clnt)
 {
 
 	int *result_9_puntero;
@@ -293,89 +261,714 @@ void func_nlibros(int *result_1_puntero, CLIENT *clnt)
 	result_9_puntero = nlibros_1(&nlibros_1_arg, clnt);
 	if (result_9_puntero == (int *)NULL)
 	{
-		clnt_perror(clnt, "call failed");
+		printf("Se ha producido un error obteniendo el numero de libros\n");
 	}
-	else
-	{
-		printf("Numero que devuelve la funcion nlibros %d\n", *result_9_puntero);
-	}
-	sleep(1);
+
+	return *result_9_puntero;
 }
 
-void func_buscar(int *result_1_puntero, CLIENT *clnt)
+int *func_buscar(int *result_1_puntero, Cadena isbn, CLIENT *clnt)
 {
 
 	int *result_10_puntero;
 	TConsulta buscar_1_arg;
 	buscar_1_arg.Ida = *result_1_puntero;
-	strcpy(buscar_1_arg.Datos, "0-019153-721161");
+	strcpy(buscar_1_arg.Datos, isbn);
 
 	result_10_puntero = buscar_1(&buscar_1_arg, clnt);
 	if (result_10_puntero == (int *)NULL)
 	{
-		clnt_perror(clnt, "call failed");
+		printf("Error al intentar realizar la busqueda\n");
 	}
-	else
-	{
-		printf("Numero que devuelve la funcion buscar %d\n", *result_10_puntero);
-	}
-	sleep(1);
+
+	return result_10_puntero;
 }
 
-void func_descargar(int *result_1_puntero, CLIENT *clnt)
+TLibro func_descargar(int *result_1_puntero, int pos, CLIENT *clnt)
 {
 
 	TLibro *result_11_puntero;
 	TPosicion descargar_1_arg;
 	descargar_1_arg.Ida = *result_1_puntero;
-	descargar_1_arg.Pos = 0;
+	descargar_1_arg.Pos = pos;
 
 	result_11_puntero = descargar_1(&descargar_1_arg, clnt);
 	if (result_11_puntero == (TLibro *)NULL)
 	{
-		clnt_perror(clnt, "call failed");
+		printf("Error al intentar descargar el libro\n");
 	}
-	else
-	{
-		printf("Isbn: %s\n", result_11_puntero->Isbn);
-		printf("Autor: %s\n", result_11_puntero->Autor);
-		printf("Idioma: %s\n", result_11_puntero->Idioma);
-		printf("Pais: %s\n", result_11_puntero->Pais);
-		printf("Titulo: %s\n", result_11_puntero->Titulo);
-		printf("Anio: %d\n", result_11_puntero->Anio);
-		printf("Numero de libros: %d\n", result_11_puntero->NoLibros);
-		printf("Numero de usuarios en espera: %d\n", result_11_puntero->NoListaEspera);
-		printf("Numero de libros prestados: %d\n", result_11_puntero->NoPrestados);
-	}
-	sleep(1);
+
+	return *result_11_puntero;
 }
 
-void func_prestar(int *result_1_puntero, CLIENT *clnt){
+void func_prestar(int *result_1_puntero, CLIENT *clnt)
+{
 
 	int *result_12_puntero;
-	
+
 	TPosicion prestar_1_arg;
 
 	prestar_1_arg.Ida = *result_1_puntero;
 	prestar_1_arg.Pos = 0;
 
 	result_12_puntero = prestar_1(&prestar_1_arg, clnt);
-	if (result_12_puntero == (int *) NULL) {
-		clnt_perror (clnt, "call failed");
+	if (result_12_puntero == (int *)NULL)
+	{
+		clnt_perror(clnt, "call failed");
 	}
-	else{
-		printf("Numero que devuelve la fucion prestar %d\n",*result_12_puntero);
+	else
+	{
+		printf("Numero que devuelve la fucion prestar %d\n", *result_12_puntero);
 	}
 	sleep(1);
+}
+
+void func_devolver(int *result_1_puntero, CLIENT *clnt)
+{
+	int *result_13_puntero;
+	TPosicion devolver_1_arg;
+	devolver_1_arg.Ida = *result_1_puntero;
+	devolver_1_arg.Pos = 0;
+
+	result_13_puntero = devolver_1(&devolver_1_arg, clnt);
+	if (result_13_puntero == (int *)NULL)
+	{
+		clnt_perror(clnt, "call failed");
+	}
+	else
+	{
+		printf("Numero que devuelve la fucion devolver %d\n", *result_13_puntero);
+	}
+	sleep(1);
+}
+
+void filtrar_libros(int *ida, CLIENT *clnt)
+{
+	char opcion, *resultado;
+	Cadena texto, campo_libro;
+	int nlibros, contador = 0;
+	TLibro libro;
+	bool_t mostrar = TRUE, cargado = TRUE;
+
+	printf("Introduce el texto a buscar: ");
+	__fpurge(stdin);
+	scanf("%s", texto);
+	printf("\nCódigo de Búsqueda\n");
+	printf("I.- Por Isbn\n");
+	printf("T.- Por Titulo\n");
+	printf("A.- Por Autor\n");
+	printf("P.- Por Pais\n");
+	printf("D.- Por Idioma\n");
+	printf("*.- Por todos los campos\n");
+	printf("\nIntroduce el Código: ");
+	__fpurge(stdin);
+	opcion = getchar();
+	printf("\n");
+
+	if (opcion == 'I' || opcion == 'i')
+	{
+		nlibros = func_nlibros(ida, clnt);
+		if (nlibros != -1)
+		{
+
+			for (int i = 0; i < nlibros; i++)
+			{
+				libro = func_descargar(ida, i, clnt);
+				resultado = strstr(libro.Isbn, texto);
+
+				if (resultado != NULL)
+				{
+					MostrarLibro(&libro, i, mostrar);
+					contador++;
+					mostrar = FALSE;
+				}
+			}
+		}
+		else
+		{
+			printf("\nNo hay libros cargados\n");
+			__fpurge(stdin);
+			getchar();
+			cargado = FALSE;
+		}
+	}
+
+	else if (opcion == 'T' || opcion == 't')
+	{
+		nlibros = func_nlibros(ida, clnt);
+		if (nlibros != -1)
+		{
+
+			for (int i = 0; i < nlibros; i++)
+			{
+				libro = func_descargar(ida, i, clnt);
+				resultado = strstr(libro.Titulo, texto);
+
+				if (resultado != NULL)
+				{
+					MostrarLibro(&libro, i, mostrar);
+					contador++;
+					mostrar = FALSE;
+				}
+			}
+		}
+		else
+		{
+			printf("\nNo hay libros cargados\n");
+			__fpurge(stdin);
+			getchar();
+			cargado = FALSE;
+		}
+	}
+
+	else if (opcion == 'A' || opcion == 'a')
+	{
+		nlibros = func_nlibros(ida, clnt);
+		if (nlibros != -1)
+		{
+
+			for (int i = 0; i < nlibros; i++)
+			{
+				libro = func_descargar(ida, i, clnt);
+				resultado = strstr(libro.Autor, texto);
+
+				if (resultado != NULL)
+				{
+					MostrarLibro(&libro, i, mostrar);
+					contador++;
+					mostrar = FALSE;
+				}
+			}
+		}
+		else
+		{
+			printf("\nNo hay libros cargados\n");
+			__fpurge(stdin);
+			getchar();
+			cargado = FALSE;
+		}
+	}
+
+	else if (opcion == 'P' || opcion == 'p')
+	{
+		nlibros = func_nlibros(ida, clnt);
+		if (nlibros != -1)
+		{
+
+			for (int i = 0; i < nlibros; i++)
+			{
+				libro = func_descargar(ida, i, clnt);
+				resultado = strstr(libro.Pais, texto);
+
+				if (resultado != NULL)
+				{
+					MostrarLibro(&libro, i, mostrar);
+					contador++;
+					mostrar = FALSE;
+				}
+			}
+		}
+		else
+		{
+			printf("\nNo hay libros cargados\n");
+			__fpurge(stdin);
+			getchar();
+			cargado = FALSE;
+		}
+	}
+
+	else if (opcion == 'D' || opcion == 'd')
+	{
+		nlibros = func_nlibros(ida, clnt);
+		if (nlibros != -1)
+		{
+
+			for (int i = 0; i < nlibros; i++)
+			{
+				libro = func_descargar(ida, i, clnt);
+				resultado = strstr(libro.Idioma, texto);
+
+				if (resultado != NULL)
+				{
+					MostrarLibro(&libro, i, mostrar);
+					contador++;
+					mostrar = FALSE;
+				}
+			}
+		}
+		else
+		{
+			printf("\nNo hay libros cargados\n");
+			__fpurge(stdin);
+			getchar();
+			cargado = FALSE;
+		}
+	}
+	else if (opcion == '*')
+	{
+		nlibros = func_nlibros(ida, clnt);
+		if (nlibros != -1)
+		{
+
+			for (int i = 0; i < nlibros; i++)
+			{
+				libro = func_descargar(ida, i, clnt);
+				if (strstr(libro.Isbn, texto) != NULL)
+				{
+					MostrarLibro(&libro, i, mostrar);
+					contador++;
+					mostrar = FALSE;
+				}
+				else if (strstr(libro.Titulo, texto) != NULL)
+				{
+					MostrarLibro(&libro, i, mostrar);
+					contador++;
+					mostrar = FALSE;
+				}
+				else if (strstr(libro.Autor, texto) != NULL)
+				{
+					MostrarLibro(&libro, i, mostrar);
+					contador++;
+					mostrar = FALSE;
+				}
+				else if (strstr(libro.Pais, texto) != NULL)
+				{
+					MostrarLibro(&libro, i, mostrar);
+					contador++;
+					mostrar = FALSE;
+				}
+				else if (strstr(libro.Idioma, texto) != NULL)
+				{
+					MostrarLibro(&libro, i, mostrar);
+					contador++;
+					mostrar = FALSE;
+				}
+			}
+		}
+		else
+		{
+			printf("\nNo hay libros cargados\n");
+			__fpurge(stdin);
+			getchar();
+			cargado = FALSE;
+		}
+	}
+
+	if (contador != 0)
+	{
+		printf("\nPresiona una tecla para continuar...\n");
+		__fpurge(stdin);
+		getchar();
+	}
+	else if (cargado == TRUE)
+	{
+		printf("\nNo se han encontrado coincidencias...\n");
+		__fpurge(stdin);
+		getchar();
+	}
+}
+
+void gestion_administracion(int *ida, CLIENT *clnt)
+{
+	int opcion_menu_administracion;
+	int *num_devuelto, nlibros, ordenacion;
+	bool_t *num_booleano_devuelto, desconexion = FALSE;
+	Cadena nom_fich, isbn;
+	char opcion;
+	TLibro libro;
+
+	do
+	{
+		opcion_menu_administracion = MenuAdministracion();
+
+		switch (opcion_menu_administracion)
+		{
+		case 1:
+			Cls;
+			printf("Introduce el nombre del fichero de datos: ");
+			__fpurge(stdin);
+			scanf("%s", nom_fich);
+			num_devuelto = func_cargar_datos(ida, nom_fich, clnt);
+
+			if (*num_devuelto == 0)
+			{
+				printf("Se ha producido un error cargando los datos\n");
+				printf("\nPresiona una tecla para continuar...\n");
+				__fpurge(stdin);
+				getchar();
+			}
+			else if (*num_devuelto == -1)
+			{
+				printf("Error, el id de administrador es incorrecto\n");
+				printf("\nPresiona una tecla para continuar...\n");
+				__fpurge(stdin);
+				getchar();
+			}
+			else if (*num_devuelto == 1)
+			{
+				printf("*** La biblioteca ha sido cargada.**\n");
+				printf("\nPresiona una tecla para continuar...\n");
+				__fpurge(stdin);
+				getchar();
+			}
+			break;
+
+		case 2:
+			Cls;
+			num_booleano_devuelto = func_guardar_datos(ida, clnt);
+
+			if (*num_booleano_devuelto == FALSE)
+			{
+				printf("Se ha producido un error guardando los datos\n");
+				printf("\nPresiona una tecla para continuar...\n");
+				__fpurge(stdin);
+				getchar();
+			}
+			else
+			{
+				printf("*** Se ha guardado el estado actual de la biblioteca.**\n");
+				printf("\nPresiona una tecla para continuar...\n");
+				__fpurge(stdin);
+				getchar();
+			}
+			break;
+
+		case 3:
+			Cls;
+			printf("Introduce el Isbn: ");
+			__fpurge(stdin);
+			scanf("%s", libro.Isbn);
+
+			printf("Introduce el Autor: ");
+			__fpurge(stdin);
+			fgets(libro.Autor, sizeof(libro.Autor), stdin);
+			libro.Autor[strcspn(libro.Autor, "\n")] = '\0';
+
+			printf("Introduce el Titulo: ");
+			__fpurge(stdin);
+			fgets(libro.Titulo, sizeof(libro.Titulo), stdin);
+			libro.Titulo[strcspn(libro.Titulo, "\n")] = '\0';
+
+			printf("Introduce el Año: ");
+			__fpurge(stdin);
+			scanf("%d", &libro.Anio);
+
+			printf("Introduce el Pais: ");
+			__fpurge(stdin);
+			fgets(libro.Pais, sizeof(libro.Pais), stdin);
+			libro.Pais[strcspn(libro.Pais, "\n")] = '\0';
+
+			printf("Introduce el Idioma: ");
+			__fpurge(stdin);
+			fgets(libro.Idioma, sizeof(libro.Idioma), stdin);
+			libro.Idioma[strcspn(libro.Idioma, "\n")] = '\0';
+
+			printf("Introduce el numero de libros inicial: ");
+			__fpurge(stdin);
+			scanf("%d", &libro.NoLibros);
+			libro.NoListaEspera = 0;
+			libro.NoPrestados = 0;
+
+			num_devuelto = func_nuevo_libro(ida, libro, clnt);
+
+			if (*num_devuelto == 0)
+			{
+				printf("\nError, ya hay un libro en la biblioteca con el mismo ISBN que el del nuevo libro\n");
+				printf("\nPresiona una tecla para continuar...\n");
+				__fpurge(stdin);
+				getchar();
+			}
+
+			else if (*num_devuelto == -1)
+			{
+				printf("\nError, el id de administrador es incorrecto\n");
+				printf("\nPresiona una tecla para continuar...\n");
+				__fpurge(stdin);
+				getchar();
+			}
+			else if (*num_devuelto == -2)
+			{
+				printf("\nError, primero hay que cargar la biblioteca\n");
+				printf("\nPresiona una tecla para continuar...\n");
+				__fpurge(stdin);
+				getchar();
+			}
+			else if (*num_devuelto == 1)
+			{
+				printf("\n*** El libro ha sido añadido correctamente.**\n");
+				printf("\nPresiona una tecla para continuar...\n");
+				__fpurge(stdin);
+				getchar();
+			}
+			break;
+
+		case 4:
+			Cls;
+			printf("Introduce el Isbn a buscar: ");
+			__fpurge(stdin);
+			scanf("%s", isbn);
+			num_devuelto = func_buscar(ida, isbn, clnt);
+
+			if (*num_devuelto == -2)
+			{
+				printf("\nError, el id de administrador es incorrecto\n");
+				printf("\nPresiona una tecla para continuar...\n");
+				__fpurge(stdin);
+				getchar();
+			}
+			else if (*num_devuelto == -3)
+			{
+				printf("\nError, primero hay que cargar la biblioteca\n");
+				printf("\nPresiona una tecla para continuar...\n");
+				__fpurge(stdin);
+				getchar();
+			}
+			else if (*num_devuelto == -1)
+			{
+				printf("\nNo se ha encontrado un libro con el Isbn indicado\n");
+				printf("\nPresiona una tecla para continuar...\n");
+				__fpurge(stdin);
+				getchar();
+			}
+			else if (*num_devuelto >= 0)
+			{
+				libro = func_descargar(ida, *num_devuelto, clnt);
+				MostrarLibro(&libro, *num_devuelto, TRUE);
+				printf("\n¿ Es este el libro que deseas comprar más unidades (s/n) ? ");
+				__fpurge(stdin);
+				opcion = getchar();
+
+				if (opcion == 's')
+				{
+					printf("Introduce el número de libros a comprar: ");
+					__fpurge(stdin);
+					scanf("%d", &nlibros);
+					num_devuelto = func_comprar_libros(ida, nlibros, isbn, clnt);
+
+					if (*num_devuelto == 1)
+					{
+						printf("*** Se han añadido los nuevos libros.**\n");
+						printf("\nPresiona una tecla para continuar...\n");
+						__fpurge(stdin);
+						getchar();
+					}
+				}
+			}
+			break;
+
+		case 5:
+			Cls;
+			printf("Introduce el Isbn a buscar: ");
+			__fpurge(stdin);
+			scanf("%s", isbn);
+			num_devuelto = func_buscar(ida, isbn, clnt);
+
+			if (*num_devuelto == -2)
+			{
+				printf("\nError, el id de administrador es incorrecto\n");
+				printf("\nPresiona una tecla para continuar...\n");
+				__fpurge(stdin);
+				getchar();
+			}
+			else if (*num_devuelto == -3)
+			{
+				printf("\nError, primero hay que cargar la biblioteca\n");
+				printf("\nPresiona una tecla para continuar...\n");
+				__fpurge(stdin);
+				getchar();
+			}
+			else if (*num_devuelto == -1)
+			{
+				printf("\nNo se ha encontrado un libro con el Isbn indicado\n");
+				printf("\nPresiona una tecla para continuar...\n");
+				__fpurge(stdin);
+				getchar();
+			}
+			else if (*num_devuelto >= 0)
+			{
+				libro = func_descargar(ida, *num_devuelto, clnt);
+				MostrarLibro(&libro, *num_devuelto, TRUE);
+				printf("\n¿ Es este el libro que deseas retirar unidades (s/n) ? ");
+				__fpurge(stdin);
+				opcion = getchar();
+
+				if (opcion == 's')
+				{
+					printf("Introduce el número de libros a retirar: ");
+					__fpurge(stdin);
+					scanf("%d", &nlibros);
+					num_devuelto = func_retirar_libros(ida, nlibros, isbn, clnt);
+
+					if (*num_devuelto == 1)
+					{
+						printf("*** Se han reducido los libros disponibles.**\n");
+						printf("\nPresiona una tecla para continuar...\n");
+						__fpurge(stdin);
+						getchar();
+					}
+					else if (*num_devuelto == 2)
+					{
+						printf("No hay suficientes ejemplares disponibles para ser retirados\n");
+						printf("\nPresiona una tecla para continuar...\n");
+						__fpurge(stdin);
+						getchar();
+					}
+				}
+			}
+
+			break;
+
+		case 6:
+			Cls;
+			printf("Código de ordenación\n");
+			printf("0.- Por Isbn\n");
+			printf("1.- Por Título\n");
+			printf("2.- Por Autor\n");
+			printf("3.- Por Año\n");
+			printf("4.- Por País\n");
+			printf("5.- Por Idioma\n");
+			printf("6.- Por nº de libros Disponibles\n");
+			printf("7.- Por nº de libros Prestados\n");
+			printf("8.- Por nº de libros en Espera\n");
+			printf("\n\nIntroduce el Código: ");
+			__fpurge(stdin);
+			scanf("%d", &ordenacion);
+			num_booleano_devuelto = func_ordenar(ida, ordenacion, clnt);
+
+			if (*num_booleano_devuelto == TRUE)
+			{
+				printf("\n*** La biblioteca ha sido ordenada correctamente.**\n");
+				printf("\nPresiona una tecla para continuar...\n");
+				__fpurge(stdin);
+				getchar();
+			}
+			else if (*num_booleano_devuelto == FALSE)
+			{
+				printf("\nNo se ha podido ordenar la biblioteca\n");
+				printf("\nPresiona una tecla para continuar...\n");
+				__fpurge(stdin);
+				getchar();
+			}
+
+			break;
+
+		case 7:
+			Cls;
+			filtrar_libros(ida, clnt);
+			break;
+
+		case 8:
+			Cls;
+			nlibros = func_nlibros(ida, clnt);
+			if (nlibros != -1)
+			{
+				libro = func_descargar(ida, 0, clnt);
+				MostrarLibro(&libro, 0, TRUE);
+
+				for (int i = 1; i < nlibros; i++)
+				{
+					libro = func_descargar(ida, i, clnt);
+					MostrarLibro(&libro, i, FALSE);
+				}
+				printf("\nPresiona una tecla para continuar...\n");
+				__fpurge(stdin);
+				getchar();
+			}
+			else
+			{
+				printf("\nError, primero hay que cargar la biblioteca\n");
+				printf("\nPresiona una tecla para continuar...\n");
+				__fpurge(stdin);
+				getchar();
+			}
+
+			break;
+
+		case 0:
+			desconexion = func_desconexion(ida, clnt);
+			if (desconexion == TRUE)
+			{
+				printf("\nSaliendo del menu de administracion\n");
+				sleep(2);
+			}
+			else
+			{
+				printf("Error en la desconexion\n");
+			}
+			break;
+		}
+	} while (opcion_menu_administracion != 0 && desconexion != TRUE);
+}
+
+void gestion_principal(CLIENT *clnt)
+{
+
+	int opcion_menu_principal;
+	Cadena contraseña;
+	int *num_devuelto;
+
+	do
+	{
+		opcion_menu_principal = MenuPrincipal();
+
+		switch (opcion_menu_principal)
+		{
+		case 1:
+			Cls;
+			printf("Por favor inserte la contraseña de administración: ");
+			__fpurge(stdin);
+			scanf("%s", contraseña);
+			num_devuelto = func_conexion(contraseña, clnt);
+
+			if (*num_devuelto == -1)
+			{
+				printf("Error, ya hay un usuario identificado como administrador, solo se permite uno\n");
+				printf("\nPresiona una tecla para continuar...\n");
+				__fpurge(stdin);
+				getchar();
+			}
+			else if (*num_devuelto == -2)
+			{
+				printf("Error, la contraseña es incorrecta\n");
+				printf("\nPresiona una tecla para continuar...\n");
+				__fpurge(stdin);
+				getchar();
+			}
+			else if (*num_devuelto != 0 && *num_devuelto != -1 && *num_devuelto != -2)
+			{
+				printf("*** Contraseña correcta, puede acceder al menú de administración ***\n");
+				printf("\nPresiona una tecla para continuar...\n");
+				__fpurge(stdin);
+				getchar();
+				gestion_administracion(num_devuelto, clnt);
+			}
+			break;
+
+		case 2:
+			Cls;
+
+			break;
+
+		case 3:
+			Cls;
+			break;
+
+		case 4:
+			Cls;
+			break;
+
+		case 0:
+
+			printf("\nSaliendo del programa...\n");
+			break;
+		}
+	} while (opcion_menu_principal != 0);
 }
 
 void gestorbiblioteca_1(char *host)
 {
 	CLIENT *clnt;
 	int *ida;
-
-	int *result_13;
-	TPosicion devolver_1_arg;
 
 #ifndef DEBUG
 	clnt = clnt_create(host, GESTORBIBLIOTECA, GESTORBIBLIOTECA_VER, "tcp");
@@ -387,26 +980,27 @@ void gestorbiblioteca_1(char *host)
 #endif /* DEBUG */
 
 	printf("Conexion correcta con el servidor\n");
+	gestion_principal(clnt);
 
 	//------------------------------CONEXION-------------------------------------------------------
-	ida = func_conexion(clnt);
+	// ida = func_conexion(clnt);
 
 	//-------------------------------DESCONEXION---------------------------------------------------
 	// func_desconexion(ida,clnt);
 
 	//------------------------------CARGAR DATOS---------------------------------------------------
-	func_cargar_datos(ida, clnt);
+	// func_cargar_datos(ida, clnt);
 
 	//------------------------------GUARDAR DATOS--------------------------------------------------
-	 //func_guardar_datos(ida,clnt);
+	// func_guardar_datos(ida,clnt);
 
 	//------------------------------NUEVO LIBRO----------------------------------------------------
-	//func_nuevo_libro(ida, clnt);
+	// func_nuevo_libro(ida, clnt);
 
 	//-------------------------------COMPRAR-------------------------------------------------------
 	// func_comprar_libros(ida,clnt);
-	//func_guardar_datos(ida, clnt);
-	//func_cargar_datos(ida, clnt);
+	// func_guardar_datos(ida, clnt);
+	// func_cargar_datos(ida, clnt);
 
 	//-------------------------------RETIRAR-------------------------------------------------------
 	// func_retirar_libros(ida,clnt);
@@ -425,18 +1019,16 @@ void gestorbiblioteca_1(char *host)
 	// func_buscar(ida,clnt);
 
 	//-------------------------------DESCARGAR------------------------------------------------------
-	func_descargar(ida, clnt);
-	
-	//--------------------------------PRESTAR-------------------------------------------------------
-	func_prestar(ida,clnt);
-	func_descargar(ida,clnt);
+	// func_descargar(ida, clnt);
 
-	/*
-	
-	result_13 = devolver_1(&devolver_1_arg, clnt);
-	if (result_13 == (int *) NULL) {
-		clnt_perror (clnt, "call failed");
-	}*/
+	//--------------------------------PRESTAR-------------------------------------------------------
+	// func_prestar(ida, clnt);
+	// func_descargar(ida, clnt);
+
+	//--------------------------------DEVOLVER------------------------------------------------------
+	// func_devolver(ida,clnt);
+	// func_descargar(ida, clnt);
+
 #ifndef DEBUG
 	clnt_destroy(clnt);
 #endif /* DEBUG */

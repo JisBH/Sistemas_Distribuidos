@@ -173,12 +173,10 @@ int *cargardatos_1_svc(TConsulta *argp, struct svc_req *rqstp)
 				if (Biblioteca != NULL)
 				{
 					free(Biblioteca);
-					printf("NumLibros vale %d\n", NumLibros);
 					Biblioteca = (TLibro *)malloc(sizeof(TLibro) * NumLibros);
 				}
 				else
 				{
-					printf("NumLibros vale %d\n", NumLibros);
 					Biblioteca = (TLibro *)malloc(sizeof(TLibro) * NumLibros);
 				}
 				// Si se ha reservado memoria correctamente...
@@ -190,47 +188,39 @@ int *cargardatos_1_svc(TConsulta *argp, struct svc_req *rqstp)
 					if (num_lecturas == NumLibros)
 					{
 						Tama = NumLibros;
-					
+
 						strcpy(NomFichero, argp->Datos);
 						quick_sort(Biblioteca, 0, NumLibros - 1, CampoOrdenacion);
-						for (int i = 0; i < NumLibros; i++)
-						{
-							printf("%s\n", Biblioteca[i].Titulo);
-							printf("%s\n", Biblioteca[i].Isbn);
-						}
-						printf("\n");
-						printf("\n");
-						printf("\n");
-						printf("\n");
+
 						result = 1;
 					}
 					else
 					{
-						printf("Se ha producido un error leyendo los libros del fichero\n");
+
 						result = 0;
 					}
 				}
 				else
 				{
-					printf("Se ha producido un error reservando memoria\n");
+
 					result = 0;
 				}
 			}
 			else
 			{
-				printf("Se ha producido un error leyendo el numero de libros del fichero\n");
+
 				result = 0;
 			}
 		}
 		else
 		{
-			printf("Ha habido un error abriendo el fichero\n");
+
 			result = 0;
 		}
 	}
 	else
 	{
-		printf("El id de administrador es incorrecto\n");
+
 		result = -1;
 	}
 	if (fdatos != NULL)
@@ -275,25 +265,21 @@ guardardatos_1_svc(int *argp, struct svc_req *rqstp)
 					else
 					{
 						result = FALSE;
-						printf("Se ha producido un error escribiendo en el fichero los libros\n");
 					}
 				}
 				else
 				{
 					result = FALSE;
-					printf("Se ha producido un error escribiendo en el fichero el numero de libros\n");
 				}
 			}
 			else
 			{
 				result = FALSE;
-				printf("Se ha producido un error abriendo el fichero\n");
 			}
 		}
 		else
 		{
 			result = FALSE;
-			printf("El id de admin es incorrecto\n");
 		}
 		if (fdatos != NULL)
 		{
@@ -334,7 +320,6 @@ int *nuevolibro_1_svc(TNuevo *argp, struct svc_req *rqstp)
 			if (encontrado == TRUE)
 			{
 				result = 0;
-				printf("Error, se ha encontrado un libro en el vector con el mismo ISBN que el del libro pasado por parametro\n");
 			}
 			// No hay ya un libro con el mismo ISBN, luego introduzco el libro en el vector dinamico
 			else
@@ -357,9 +342,8 @@ int *nuevolibro_1_svc(TNuevo *argp, struct svc_req *rqstp)
 						introduce_libro_en_vector(argp->Libro);
 						NumLibros++;
 						quick_sort(Biblioteca, 0, NumLibros - 1, CampoOrdenacion);
-						
+
 						result = 1;
-						
 					}
 					else
 					{
@@ -379,7 +363,6 @@ int *nuevolibro_1_svc(TNuevo *argp, struct svc_req *rqstp)
 		else
 		{
 			result = -1;
-			printf("El id de admin es incorrecto\n");
 		}
 	}
 	else
@@ -432,13 +415,13 @@ int *comprar_1_svc(TComRet *argp, struct svc_req *rqstp)
 			}
 			else
 			{
-				printf("No se ha encontrado el libro en la biblioteca\n");
+
 				result = 0;
 			}
 		}
 		else
 		{
-			printf("El id de admin es incorrecto\n");
+
 			result = -1;
 		}
 	}
@@ -528,8 +511,13 @@ ordenar_1_svc(TOrdenacion *argp, struct svc_req *rqstp)
 
 int *nlibros_1_svc(int *argp, struct svc_req *rqstp)
 {
-	static int result;
-	result = NumLibros;
+	static int result = -1;
+
+	if (Biblioteca != NULL)
+	{
+		result = NumLibros;
+	}
+
 	return &result;
 }
 
@@ -539,33 +527,40 @@ int *buscar_1_svc(TConsulta *argp, struct svc_req *rqstp)
 	int i = 0;
 	bool_t encontrado = FALSE;
 
-	if (argp->Ida == IdAdmin && argp->Ida > 0 && Biblioteca != NULL)
+	if (Biblioteca != NULL)
 	{
-
-		while (!encontrado && i < NumLibros)
+		if (argp->Ida == IdAdmin && argp->Ida > 0)
 		{
-			if (strcmp(Biblioteca[i].Isbn, argp->Datos) == 0)
+
+			while (!encontrado && i < NumLibros)
 			{
-				encontrado = TRUE;
+				if (strcmp(Biblioteca[i].Isbn, argp->Datos) == 0)
+				{
+					encontrado = TRUE;
+				}
+				else
+				{
+					i++;
+				}
+			}
+
+			if (encontrado == TRUE)
+			{
+				result = i;
 			}
 			else
 			{
-				i++;
+				result = -1;
 			}
-		}
-
-		if (encontrado == TRUE)
-		{
-			result = i;
 		}
 		else
 		{
-			result = -1;
+			result = -2;
 		}
 	}
 	else
 	{
-		result = -2;
+		result = -3;
 	}
 
 	return &result;
@@ -644,23 +639,33 @@ int *devolver_1_svc(TPosicion *argp, struct svc_req *rqstp)
 	static int result;
 
 	// Si la posicion es incorrecta o la Biblioteca es nula
-	if (argp->Pos >= NumLibros || argp->Pos < 0 || Biblioteca == NULL){
+	if (argp->Pos >= NumLibros || argp->Pos < 0 || Biblioteca == NULL)
+	{
 		result = -1;
 	}
 	// Si es correcta y la Biblioteca no es nula
-	else{
+	else
+	{
 		// Si hay usuarios en espera
-		if(Biblioteca[argp->Pos].NoListaEspera > 0){
+		if (Biblioteca[argp->Pos].NoListaEspera > 0)
+		{
 			Biblioteca[argp->Pos].NoListaEspera--;
-			Biblioteca[argp->Pos].NoPrestados++;
+			result = 0;
 		}
 		// Si no hay usuarios en espera pero si libros prestados
-		else if(Biblioteca[argp->Pos].NoListaEspera == 0 && Biblioteca[argp->Pos].NoPrestados > 0){
+		else if (Biblioteca[argp->Pos].NoListaEspera == 0 && Biblioteca[argp->Pos].NoPrestados > 0)
+		{
 			Biblioteca[argp->Pos].NoPrestados--;
 			Biblioteca[argp->Pos].NoLibros++;
+			result = 1;
 		}
+		// Si ni hay usuarios en lista de espera ni hay libros prestados
+		else if (Biblioteca[argp->Pos].NoListaEspera == 0 && Biblioteca[argp->Pos].NoPrestados == 0)
+		{
+			result = 2;
+		}
+		quick_sort(Biblioteca, 0, NumLibros - 1, CampoOrdenacion);
 	}
-	
 
 	return &result;
 }
