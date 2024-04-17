@@ -607,28 +607,36 @@ int *prestar_1_svc(TPosicion *argp, struct svc_req *rqstp)
 {
 	static int result;
 
-	// Si la posicion es incorrecta o la Biblioteca es nula
-	if (argp->Pos >= NumLibros || argp->Pos < 0 || Biblioteca == NULL)
+	// Si la biblioteca no es nula
+	if (Biblioteca != NULL)
 	{
-		result = -1;
-	}
-	// Si es correcta y la Biblioteca no es nula
-	else
-	{
-		// Si hay ejemplares disponibles
-		if (Biblioteca[argp->Pos].NoLibros > 0)
+		// Si la posicion es incorrecta
+		if (argp->Pos >= NumLibros || argp->Pos < 0)
 		{
-			Biblioteca[argp->Pos].NoLibros--;
-			Biblioteca[argp->Pos].NoPrestados++;
-			result = 1;
+			result = -1;
 		}
-		// Si no hay ejemplares disponibles
+		// Si es correcta y la Biblioteca no es nula
 		else
 		{
-			Biblioteca[argp->Pos].NoListaEspera++;
-			result = 0;
+			// Si hay ejemplares disponibles
+			if (Biblioteca[argp->Pos].NoLibros > 0)
+			{
+				Biblioteca[argp->Pos].NoLibros--;
+				Biblioteca[argp->Pos].NoPrestados++;
+				result = 1;
+			}
+			// Si no hay ejemplares disponibles
+			else
+			{
+				Biblioteca[argp->Pos].NoListaEspera++;
+				result = 0;
+			}
+			quick_sort(Biblioteca, 0, NumLibros - 1, CampoOrdenacion);
 		}
-		quick_sort(Biblioteca, 0, NumLibros - 1, CampoOrdenacion);
+	}
+	else
+	{
+		result = -2;
 	}
 
 	return &result;
@@ -638,33 +646,41 @@ int *devolver_1_svc(TPosicion *argp, struct svc_req *rqstp)
 {
 	static int result;
 
-	// Si la posicion es incorrecta o la Biblioteca es nula
-	if (argp->Pos >= NumLibros || argp->Pos < 0 || Biblioteca == NULL)
+	// Si la Biblioteca no es nula
+	if (Biblioteca != NULL)
 	{
-		result = -1;
+		// Si la posicion es incorrecta
+		if (argp->Pos >= NumLibros || argp->Pos < 0)
+		{
+			result = -1;
+		}
+		// Si es correcta y la Biblioteca no es nula
+		else
+		{
+			// Si hay usuarios en espera y hay libros prestados
+			if (Biblioteca[argp->Pos].NoListaEspera > 0 && Biblioteca[argp->Pos].NoPrestados > 0)
+			{
+				Biblioteca[argp->Pos].NoListaEspera--;
+				result = 0;
+			}
+			// Si no hay usuarios en espera pero si libros prestados
+			else if (Biblioteca[argp->Pos].NoListaEspera == 0 && Biblioteca[argp->Pos].NoPrestados > 0)
+			{
+				Biblioteca[argp->Pos].NoPrestados--;
+				Biblioteca[argp->Pos].NoLibros++;
+				result = 1;
+			}
+			// Si ni hay usuarios en lista de espera ni hay libros prestados
+			else if ((Biblioteca[argp->Pos].NoListaEspera == 0 && Biblioteca[argp->Pos].NoPrestados == 0) || Biblioteca[argp->Pos].NoPrestados == 0)
+			{
+				result = 2;
+			}
+			quick_sort(Biblioteca, 0, NumLibros - 1, CampoOrdenacion);
+		}
 	}
-	// Si es correcta y la Biblioteca no es nula
 	else
 	{
-		// Si hay usuarios en espera
-		if (Biblioteca[argp->Pos].NoListaEspera > 0)
-		{
-			Biblioteca[argp->Pos].NoListaEspera--;
-			result = 0;
-		}
-		// Si no hay usuarios en espera pero si libros prestados
-		else if (Biblioteca[argp->Pos].NoListaEspera == 0 && Biblioteca[argp->Pos].NoPrestados > 0)
-		{
-			Biblioteca[argp->Pos].NoPrestados--;
-			Biblioteca[argp->Pos].NoLibros++;
-			result = 1;
-		}
-		// Si ni hay usuarios en lista de espera ni hay libros prestados
-		else if (Biblioteca[argp->Pos].NoListaEspera == 0 && Biblioteca[argp->Pos].NoPrestados == 0)
-		{
-			result = 2;
-		}
-		quick_sort(Biblioteca, 0, NumLibros - 1, CampoOrdenacion);
+		result = -2;
 	}
 
 	return &result;
