@@ -4,9 +4,11 @@
  */
 package cliente;
 
+import java.util.Random;
+import java.util.Scanner;
+import java.rmi.Naming;
+import servicio.comun.GestorBibliotecaIntf;
 import servicio.comun.TLibro;
-
-
 
 /**
  *
@@ -19,6 +21,22 @@ public class Cliente {
      */
     public static void main(String[] args) {
         TLibro tLibro = new TLibro();
-    }
 
+        try {
+            int Puerto = 0;
+            String Host;
+            Scanner Teclado = new Scanner(System.in);
+            System.out.print("Introduce el nº de puerto para comunicarse: ");
+            Puerto = Teclado.nextInt();
+            System.out.print("Introduce el nombre del host: ");
+            Host = Teclado.next();
+
+            // Obtiene el stub del rmiregistry 
+            Random rnd = new Random(System.nanoTime());
+            GestorBibliotecaIntf biblioStub = (GestorBibliotecaIntf) Naming.lookup("rmi://" + Host + ":" + Puerto + "/Calculadora");
+        } catch (Exception e) {
+            System.out.println("Error: " + e);
+        }
+
+    }
 }
