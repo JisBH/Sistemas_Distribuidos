@@ -179,11 +179,5 @@ public class TLibro {
     public void setReservados(int reservados) {
         this.reservados = reservados;
     }
-
-   
-
-
-
-
     
 }

@@ -4,9 +4,11 @@
  */
 package servidor;
 
-import java.util.Scanner;
-import java.rmi.Naming;
 import servicio.comun.GestorBibliotecaIntf;
+import java.rmi.RemoteException;
+import java.rmi.server.*;
+import java.rmi.registry.*;
+import java.util.Scanner;
 
 /**
  *
@@ -14,29 +16,26 @@ import servicio.comun.GestorBibliotecaIntf;
  */
 public class Servidor {
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws RemoteException {
 
         try {
-
-            GestorBibliotecaIntf biblioStub = new GestorBiblioteca();
             int Puerto = 0;
             Scanner Teclado = new Scanner(System.in);
             System.out.print("Introduce el nº de puerto para comunicarse: ");
             Puerto = Teclado.nextInt();
 
-            Naming.rebind("rmi://localhost:" + Puerto + "/Calculadora", biblioStub);
+            Registry registry = LocateRegistry.createRegistry(Puerto);
+            GestorBiblioteca obj = new GestorBiblioteca();
 
-            System.out.println("Servidor Calculadora esperando peticiones ... ");
-            //Naming.unbind("rmi://localhost:"+Puerto+"/Calculadora");
+            GestorBibliotecaIntf stub = (GestorBibliotecaIntf) UnicastRemoteObject.exportObject(obj, Puerto);
 
+            registry = LocateRegistry.getRegistry(Puerto);
+            registry.bind("GestorBibliotecaIntf", stub);
+
+            System.out.println("Servidor GestorBiblioteca esperando peticiones ... ");
         } catch (Exception e) {
-            System.out.println("Error en servidor Calculadora:" + e);
+            System.out.println("Error en servidor GestorBiblioteca:" + e);
         }
     }
 
 }
-
-

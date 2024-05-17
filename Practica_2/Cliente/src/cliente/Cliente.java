@@ -4,7 +4,6 @@
  */
 package cliente;
 
-import java.util.Random;
 import java.util.Scanner;
 import java.rmi.Naming;
 import servicio.comun.GestorBibliotecaIntf;
@@ -32,8 +31,7 @@ public class Cliente {
             Host = Teclado.next();
 
             // Obtiene el stub del rmiregistry 
-            Random rnd = new Random(System.nanoTime());
-            GestorBibliotecaIntf biblioStub = (GestorBibliotecaIntf) Naming.lookup("rmi://" + Host + ":" + Puerto + "/Calculadora");
+            GestorBibliotecaIntf biblioStub = (GestorBibliotecaIntf) Naming.lookup("rmi://" + Host + ":" + Puerto + "/GestorBiblioteca");
         } catch (Exception e) {
             System.out.println("Error: " + e);
         }
