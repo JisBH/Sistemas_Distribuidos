@@ -30,9 +30,10 @@ public class Servidor {
             GestorBibliotecaIntf stub = (GestorBibliotecaIntf) UnicastRemoteObject.exportObject(obj, Puerto);
 
             registry = LocateRegistry.getRegistry(Puerto);
-            registry.bind("GestorBibliotecaIntf", stub);
+            registry.bind("GestorBiblioteca", stub);
 
             System.out.println("Servidor GestorBiblioteca esperando peticiones ... ");
+            
         } catch (Exception e) {
             System.out.println("Error en servidor GestorBiblioteca:" + e);
         }

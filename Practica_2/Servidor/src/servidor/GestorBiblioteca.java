@@ -2,6 +2,7 @@ package servidor;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.Random;
 import servicio.comun.GestorBibliotecaIntf;
 import servicio.comun.TDatosRepositorio;
 import servicio.comun.TLibro;
@@ -10,7 +11,10 @@ import servicio.comun.TLibro;
  *
  * @author Usuario
  */
-public class GestorBiblioteca extends UnicastRemoteObject implements GestorBibliotecaIntf {
+public class GestorBiblioteca implements GestorBibliotecaIntf {
+    
+    private int numAdministradores = 0; // Contador con el numero de administradores actualmente en el sistema
+    private int idAdmin = -1;	 // Copia del Identificador de Administración enviado al usuario.
 
     public GestorBiblioteca() throws RemoteException{
         super();
@@ -18,12 +22,47 @@ public class GestorBiblioteca extends UnicastRemoteObject implements GestorBibli
   
     @Override
     public int Conexion(String pPasswd) throws RemoteException {
-        
+        int result;
+
+	// Si ya tengo un administrador, devuelvo -1
+	if (this.numAdministradores == 1)
+	{
+		result = -1;
+	}
+
+	// Si aún no tengo ningún administrador y la contraseña es correcta, devuelvo un número aleatorio
+	else if (pPasswd.equals("1234"))
+	{
+		this.numAdministradores++;
+                Random random = new Random();
+                result = random.nextInt(1000000) + 1;
+		this.idAdmin = result;
+	}
+
+	// Si aún no tengo ningún administrador y la contraseña es incorrecta, devuelvo -2
+	else
+	{
+		result = -2;
+	}
+
+	return result;
     }
 
     @Override
     public boolean Desconexion(int pIda) throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        boolean result;
+
+	if (this.idAdmin == pIda)
+	{
+		this.idAdmin = -1;
+		this.numAdministradores--;
+		result = true;
+	}
+	else
+	{
+		result = false;
+	}
+	return result;
     }
 
     @Override
