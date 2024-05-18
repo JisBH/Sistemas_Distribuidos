@@ -1,9 +1,17 @@
 package servidor;
 
+import java.io.DataInputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.Paths;
 import java.rmi.RemoteException;
-import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
+import servicio.comun.ArrayListRepositorioLibro;
 import servicio.comun.GestorBibliotecaIntf;
+import servicio.comun.RepositorioLibro;
 import servicio.comun.TDatosRepositorio;
 import servicio.comun.TLibro;
 
@@ -12,57 +20,48 @@ import servicio.comun.TLibro;
  * @author Usuario
  */
 public class GestorBiblioteca implements GestorBibliotecaIntf {
-    
+
     private int numAdministradores = 0; // Contador con el numero de administradores actualmente en el sistema
     private int idAdmin = -1;	 // Copia del Identificador de Administración enviado al usuario.
+    private List<TDatosRepositorio> repositoriosCargados = new ArrayList<>(); // Lista con los repositorios cargados en memoria actualmente
 
-    public GestorBiblioteca() throws RemoteException{
+    public GestorBiblioteca() throws RemoteException {
         super();
     }
-  
+
     @Override
     public int Conexion(String pPasswd) throws RemoteException {
         int result;
 
-	// Si ya tengo un administrador, devuelvo -1
-	if (this.numAdministradores == 1)
-	{
-		result = -1;
-	}
+        // Si ya tengo un administrador, devuelvo -1
+        if (this.numAdministradores == 1) {
+            result = -1;
+        } // Si aún no tengo ningún administrador y la contraseña es correcta, devuelvo un número aleatorio
+        else if (pPasswd.equals("1234")) {
+            this.numAdministradores++;
+            Random random = new Random();
+            result = random.nextInt(1000000) + 1;
+            this.idAdmin = result;
+        } // Si aún no tengo ningún administrador y la contraseña es incorrecta, devuelvo -2
+        else {
+            result = -2;
+        }
 
-	// Si aún no tengo ningún administrador y la contraseña es correcta, devuelvo un número aleatorio
-	else if (pPasswd.equals("1234"))
-	{
-		this.numAdministradores++;
-                Random random = new Random();
-                result = random.nextInt(1000000) + 1;
-		this.idAdmin = result;
-	}
-
-	// Si aún no tengo ningún administrador y la contraseña es incorrecta, devuelvo -2
-	else
-	{
-		result = -2;
-	}
-
-	return result;
+        return result;
     }
 
     @Override
     public boolean Desconexion(int pIda) throws RemoteException {
         boolean result;
 
-	if (this.idAdmin == pIda)
-	{
-		this.idAdmin = -1;
-		this.numAdministradores--;
-		result = true;
-	}
-	else
-	{
-		result = false;
-	}
-	return result;
+        if (this.idAdmin == pIda) {
+            this.idAdmin = -1;
+            this.numAdministradores--;
+            result = true;
+        } else {
+            result = false;
+        }
+        return result;
     }
 
     @Override
@@ -77,7 +76,55 @@ public class GestorBiblioteca implements GestorBibliotecaIntf {
 
     @Override
     public int AbrirRepositorio(int pIda, String pNomFichero) throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+
+        int result;
+        
+        if (pIda != idAdmin) {
+            result = -1;
+
+        } else {
+            try {
+                DataInputStream inputStream = new DataInputStream(new FileInputStream(Paths.get(pNomFichero).toAbsolutePath().toString()));
+
+                int numeroLibros = inputStream.readInt();
+                String nombreRepositorio = inputStream.readUTF();
+                String direccionRepositorio = inputStream.readUTF();
+
+                RepositorioLibro repositorioLibro = new ArrayListRepositorioLibro();
+                TDatosRepositorio datosRepositorio = new TDatosRepositorio(numeroLibros, nombreRepositorio, direccionRepositorio, repositorioLibro);
+
+                if (repositoriosCargados.contains(datosRepositorio)) {
+                    result = -2;
+                } else {
+                    for (int i = 0; i < numeroLibros; i++) {
+                        String isbn = inputStream.readUTF();
+                        String titulo = inputStream.readUTF();
+                        String autor = inputStream.readUTF();
+                        int anio = inputStream.readInt();
+                        String pais = inputStream.readUTF();
+                        String idioma = inputStream.readUTF();
+                        int disponible = inputStream.readInt();
+                        int prestado = inputStream.readInt();
+                        int reservado = inputStream.readInt();
+                       
+                        TLibro libro = new TLibro(titulo, autor, pais, idioma, isbn, anio, disponible, prestado, reservado);
+                        datosRepositorio.getRepositorioLibro().aniadirLibro(libro);       
+                    }
+                   
+                    repositoriosCargados.add(datosRepositorio);
+                    result = 1;     
+                }
+
+            } catch (FileNotFoundException ex) {
+                System.out.println("Error: " + ex);
+                result = 0;
+            } catch (IOException ex) {
+                System.out.println("Error: " + ex);
+                result = 0;
+            }
+
+        }
+        return result;
     }
 
     @Override
@@ -129,7 +176,7 @@ public class GestorBiblioteca implements GestorBibliotecaIntf {
     public int Devolver(int pPos) throws RemoteException {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-    
+
     /*código para Ordenar una estructura de datos que tenga definido el método sort.
 ********************************************************************************
 
@@ -212,6 +259,4 @@ public void Mostrar(int Pos, boolean Cabecera) {
     System.out.println(String.format("%-5d%s%-18s%-4d%-4d%-4d", Pos + 1, T, Isbn, NoLibros, NoPrestados, NoListaEspera));
     System.out.println(String.format("     %s%s%-12d", A, PI, Anio));
 }*/
-
-    
 }

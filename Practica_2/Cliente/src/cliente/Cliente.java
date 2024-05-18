@@ -19,8 +19,7 @@ public class Cliente {
     private int MenuPrincipal() {
         int salida;
         do {
-            System.out.println("");
-            System.out.println(" GESTOR BIBLIOTECARIO 2.0 (M. PRINCIPAL)");
+            System.out.println("\n\n GESTOR BIBLIOTECARIO 2.0 (M. PRINCIPAL)");
             System.out.println("*****************************************");
             System.out.println("\t1.- M. Administración");
             System.out.println("\t2.- Consulta de libros");
@@ -40,8 +39,7 @@ public class Cliente {
     private int MenuAdministracion() {
         int salida;
         do {
-            System.out.println("");
-            System.out.println(" GESTOR BIBLIOTECARIO 2.0 (M. ADMINISTRACION)");
+            System.out.println("\n\n GESTOR BIBLIOTECARIO 2.0 (M. ADMINISTRACION)");
             System.out.println("**********************************************");
             System.out.println("\t1.- Cargar datos Biblioteca");
             System.out.println("\t2.- Guardar datos Biblioteca");
@@ -91,16 +89,58 @@ public class Cliente {
 
         return resultado;
     }
+    
+    private int funcAbrirRepositorio(int ida, GestorBibliotecaIntf biblioStub, String nombreRepositorio){
+        
+        int resultado;
+        
+        try{
+            resultado = biblioStub.AbrirRepositorio(ida, nombreRepositorio);
+            
+        } catch (RemoteException ex){
+            System.out.println("Se ha producido un error en la funcion abrir repositorio");
+            resultado = -3;
+        }
+        
+        return resultado;
+    }
 
     private void gestionAdministracion(int ida, GestorBibliotecaIntf biblioStub) {
         int opcionMenuAdministracion;
         boolean desconexion = false;
+        int resultado;
+        Scanner teclado = new Scanner(System.in);
+        String nombreFichero;
 
         do {
             opcionMenuAdministracion = MenuAdministracion();
             switch (opcionMenuAdministracion) {
+                
                 case 1:
-
+                    System.out.println("\n\nIntroduzca el nombre del repositorio a abrir: ");
+                    nombreFichero = teclado.nextLine();
+                    resultado = funcAbrirRepositorio(ida, biblioStub, nombreFichero);
+                    
+                    if(resultado == -1){
+                        System.out.println("\n\nError el id de administrador es incorrecto");
+                        System.out.println("\nPresiona una tecla para continuar...");
+                        teclado.nextLine();
+                    }
+                    else if(resultado == -2){
+                        System.out.println("\n\nError ya existe un repositorio cargado con el mismo nombre");
+                        System.out.println("\nPresiona una tecla para continuar...");
+                        teclado.nextLine();
+                    }
+                    else if(resultado == 0){
+                        System.out.println("\n\nNo se ha podido abrir el repositorio");
+                        System.out.println("\nPresiona una tecla para continuar...");
+                        teclado.nextLine();
+                    }
+                    else if(resultado == 1){
+                        System.out.println("\n\n**El repositorio ha sido cargado correctamente**");
+                        System.out.println("\nPresiona una tecla para continuar...");
+                        teclado.nextLine();
+                    }
                     break;
 
                 case 2:
@@ -149,6 +189,7 @@ public class Cliente {
     private void gestionPrincipal(GestorBibliotecaIntf biblioStub) {
         int opcionMenuPrincipal;
         String contraseña;
+        Scanner teclado = new Scanner(System.in);
         int resultado;
 
         do {
@@ -157,8 +198,7 @@ public class Cliente {
                 case 1:
 
                     System.out.println("");
-                    System.out.println("Por favor inserte la contraseña de administración: ");
-                    Scanner teclado = new Scanner(System.in);
+                    System.out.println("Por favor inserte la contraseña de administración: ");                  
                     contraseña = teclado.nextLine();
                     resultado = funcConexion(contraseña, biblioStub);
 

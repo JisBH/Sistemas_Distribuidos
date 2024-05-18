@@ -17,7 +17,7 @@ public class TLibro {
     public String pais;
     public String idioma;
     public String isbn;
-    public String anio;
+    public int anio;
     public int disponibles;
     public int prestados;
     public int reservados;
@@ -25,7 +25,7 @@ public class TLibro {
     public TLibro() {
     }
 
-    public TLibro(String titulo, String autor, String pais, String idioma, String isbn, String anio, int disponibles, int prestados, int reservados) {
+    public TLibro(String titulo, String autor, String pais, String idioma, String isbn, int anio, int disponibles, int prestados, int reservados) {
         this.titulo = titulo;
         this.autor = autor;
         this.pais = pais;
@@ -35,77 +35,6 @@ public class TLibro {
         this.disponibles = disponibles;
         this.prestados = prestados;
         this.reservados = reservados;
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 7;
-        hash = 67 * hash + Objects.hashCode(this.titulo);
-        hash = 67 * hash + Objects.hashCode(this.autor);
-        hash = 67 * hash + Objects.hashCode(this.pais);
-        hash = 67 * hash + Objects.hashCode(this.idioma);
-        hash = 67 * hash + Objects.hashCode(this.isbn);
-        hash = 67 * hash + Objects.hashCode(this.anio);
-        hash = 67 * hash + this.disponibles;
-        hash = 67 * hash + this.prestados;
-        hash = 67 * hash + this.reservados;
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final TLibro other = (TLibro) obj;
-        if (this.disponibles != other.disponibles) {
-            return false;
-        }
-        if (this.prestados != other.prestados) {
-            return false;
-        }
-        if (this.reservados != other.reservados) {
-            return false;
-        }
-        if (!Objects.equals(this.titulo, other.titulo)) {
-            return false;
-        }
-        if (!Objects.equals(this.autor, other.autor)) {
-            return false;
-        }
-        if (!Objects.equals(this.pais, other.pais)) {
-            return false;
-        }
-        if (!Objects.equals(this.idioma, other.idioma)) {
-            return false;
-        }
-        if (!Objects.equals(this.isbn, other.isbn)) {
-            return false;
-        }
-        return Objects.equals(this.anio, other.anio);
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("TLibro{");
-        sb.append("titulo=").append(titulo);
-        sb.append(", autor=").append(autor);
-        sb.append(", pais=").append(pais);
-        sb.append(", idioma=").append(idioma);
-        sb.append(", isbn=").append(isbn);
-        sb.append(", anio=").append(anio);
-        sb.append(", disponibles=").append(disponibles);
-        sb.append(", prestados=").append(prestados);
-        sb.append(", reservados=").append(reservados);
-        sb.append('}');
-        return sb.toString();
     }
 
     public String getTitulo() {
@@ -148,11 +77,11 @@ public class TLibro {
         this.isbn = isbn;
     }
 
-    public String getAnio() {
+    public int getAnio() {
         return anio;
     }
 
-    public void setAnio(String anio) {
+    public void setAnio(int anio) {
         this.anio = anio;
     }
 
@@ -179,5 +108,75 @@ public class TLibro {
     public void setReservados(int reservados) {
         this.reservados = reservados;
     }
-    
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 97 * hash + Objects.hashCode(this.titulo);
+        hash = 97 * hash + Objects.hashCode(this.autor);
+        hash = 97 * hash + Objects.hashCode(this.pais);
+        hash = 97 * hash + Objects.hashCode(this.idioma);
+        hash = 97 * hash + Objects.hashCode(this.isbn);
+        hash = 97 * hash + this.anio;
+        hash = 97 * hash + this.disponibles;
+        hash = 97 * hash + this.prestados;
+        hash = 97 * hash + this.reservados;
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final TLibro other = (TLibro) obj;
+        if (this.anio != other.anio) {
+            return false;
+        }
+        if (this.disponibles != other.disponibles) {
+            return false;
+        }
+        if (this.prestados != other.prestados) {
+            return false;
+        }
+        if (this.reservados != other.reservados) {
+            return false;
+        }
+        if (!Objects.equals(this.titulo, other.titulo)) {
+            return false;
+        }
+        if (!Objects.equals(this.autor, other.autor)) {
+            return false;
+        }
+        if (!Objects.equals(this.pais, other.pais)) {
+            return false;
+        }
+        if (!Objects.equals(this.idioma, other.idioma)) {
+            return false;
+        }
+        return Objects.equals(this.isbn, other.isbn);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("TLibro{");
+        sb.append("titulo=").append(titulo);
+        sb.append(", autor=").append(autor);
+        sb.append(", pais=").append(pais);
+        sb.append(", idioma=").append(idioma);
+        sb.append(", isbn=").append(isbn);
+        sb.append(", anio=").append(anio);
+        sb.append(", disponibles=").append(disponibles);
+        sb.append(", prestados=").append(prestados);
+        sb.append(", reservados=").append(reservados);
+        sb.append('}');
+        return sb.toString();
+    }
 }
