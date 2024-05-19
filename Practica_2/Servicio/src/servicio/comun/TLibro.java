@@ -4,13 +4,14 @@
  */
 package servicio.comun;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 /**
  *
  * @author Usuario
  */
-public class TLibro {
+public class TLibro implements Serializable {
     
     public String titulo;
     public String autor;

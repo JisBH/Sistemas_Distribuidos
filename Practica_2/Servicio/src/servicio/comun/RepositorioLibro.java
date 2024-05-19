@@ -16,4 +16,6 @@ public interface RepositorioLibro {
     
     public TLibro getLibroPorIsbn(String isbn);
     
+    public TLibro getLibro(int pos);
+    
 }

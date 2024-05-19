@@ -1,8 +1,10 @@
 package servidor;
 
 import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.rmi.RemoteException;
@@ -19,31 +21,38 @@ import servicio.comun.TLibro;
  *
  * @author Usuario
  */
-public class GestorBiblioteca implements GestorBibliotecaIntf {
+public class GestorBiblioteca implements GestorBibliotecaIntf
+{
 
     private int numAdministradores = 0; // Contador con el numero de administradores actualmente en el sistema
     private int idAdmin = -1;	 // Copia del Identificador de Administración enviado al usuario.
     private List<TDatosRepositorio> repositoriosCargados = new ArrayList<>(); // Lista con los repositorios cargados en memoria actualmente
+    private int numRepositoriosCargados = 0;
 
-    public GestorBiblioteca() throws RemoteException {
+    public GestorBiblioteca() throws RemoteException
+    {
         super();
     }
 
     @Override
-    public int Conexion(String pPasswd) throws RemoteException {
+    public int Conexion(String pPasswd) throws RemoteException
+    {
         int result;
 
         // Si ya tengo un administrador, devuelvo -1
-        if (this.numAdministradores == 1) {
+        if (this.numAdministradores == 1)
+        {
             result = -1;
         } // Si aún no tengo ningún administrador y la contraseña es correcta, devuelvo un número aleatorio
-        else if (pPasswd.equals("1234")) {
+        else if (pPasswd.equals("1234"))
+        {
             this.numAdministradores++;
             Random random = new Random();
             result = random.nextInt(1000000) + 1;
             this.idAdmin = result;
         } // Si aún no tengo ningún administrador y la contraseña es incorrecta, devuelvo -2
-        else {
+        else
+        {
             result = -2;
         }
 
@@ -51,39 +60,48 @@ public class GestorBiblioteca implements GestorBibliotecaIntf {
     }
 
     @Override
-    public boolean Desconexion(int pIda) throws RemoteException {
+    public boolean Desconexion(int pIda) throws RemoteException
+    {
         boolean result;
 
-        if (this.idAdmin == pIda) {
+        if (this.idAdmin == pIda)
+        {
             this.idAdmin = -1;
             this.numAdministradores--;
             result = true;
-        } else {
+        } else
+        {
             result = false;
         }
         return result;
     }
 
     @Override
-    public int NRepositorios(int pIda) throws RemoteException {
+    public int NRepositorios(int pIda) throws RemoteException
+    {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public TDatosRepositorio DatosRepositorio(int pIda, int pPosRepo) throws RemoteException {
+    public TDatosRepositorio DatosRepositorio(int pIda, int pPosRepo) throws RemoteException
+    {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public int AbrirRepositorio(int pIda, String pNomFichero) throws RemoteException {
+    public int AbrirRepositorio(int pIda, String pNomFichero) throws RemoteException
+    {
 
         int result;
-        
-        if (pIda != idAdmin) {
+
+        if (pIda != idAdmin)
+        {
             result = -1;
 
-        } else {
-            try {
+        } else
+        {
+            try
+            {
                 DataInputStream inputStream = new DataInputStream(new FileInputStream(Paths.get(pNomFichero).toAbsolutePath().toString()));
 
                 int numeroLibros = inputStream.readInt();
@@ -93,10 +111,13 @@ public class GestorBiblioteca implements GestorBibliotecaIntf {
                 RepositorioLibro repositorioLibro = new ArrayListRepositorioLibro();
                 TDatosRepositorio datosRepositorio = new TDatosRepositorio(numeroLibros, nombreRepositorio, direccionRepositorio, repositorioLibro);
 
-                if (repositoriosCargados.contains(datosRepositorio)) {
+                if (repositoriosCargados.contains(datosRepositorio))
+                {
                     result = -2;
-                } else {
-                    for (int i = 0; i < numeroLibros; i++) {
+                } else
+                {
+                    for (int i = 0; i < numeroLibros; i++)
+                    {
                         String isbn = inputStream.readUTF();
                         String titulo = inputStream.readUTF();
                         String autor = inputStream.readUTF();
@@ -106,19 +127,22 @@ public class GestorBiblioteca implements GestorBibliotecaIntf {
                         int disponible = inputStream.readInt();
                         int prestado = inputStream.readInt();
                         int reservado = inputStream.readInt();
-                       
+
                         TLibro libro = new TLibro(titulo, autor, pais, idioma, isbn, anio, disponible, prestado, reservado);
-                        datosRepositorio.getRepositorioLibro().aniadirLibro(libro);       
+                        datosRepositorio.getRepositorioLibro().aniadirLibro(libro);
                     }
-                   
+
                     repositoriosCargados.add(datosRepositorio);
-                    result = 1;     
+                    numRepositoriosCargados++;
+                    result = 1;
                 }
 
-            } catch (FileNotFoundException ex) {
+            } catch (FileNotFoundException ex)
+            {
                 System.out.println("Error: " + ex);
                 result = 0;
-            } catch (IOException ex) {
+            } catch (IOException ex)
+            {
                 System.out.println("Error: " + ex);
                 result = 0;
             }
@@ -128,52 +152,141 @@ public class GestorBiblioteca implements GestorBibliotecaIntf {
     }
 
     @Override
-    public int GuardarRepositorio(int pIda, int pRepo) throws RemoteException {
+    public int GuardarRepositorio(int pIda, int pRepo) throws RemoteException
+    {
+        int posEscritura = pRepo+1;
+
+        if (pIda != idAdmin)
+        {
+            return -1;
+        }
+
+        if (pRepo < -1 || pRepo >= numRepositoriosCargados)
+        {
+            return -2;
+        }
+
+        try
+        {
+            if (pRepo != -1)
+            {
+
+                TDatosRepositorio datosRepositorio = this.repositoriosCargados.get(pRepo);
+                DataOutputStream outputStream = new DataOutputStream(new FileOutputStream(Paths.get("Biblioteca.jdat_R" + posEscritura + "_").toAbsolutePath().toString()));
+
+                outputStream.writeInt(datosRepositorio.getNumeroLibros());
+                outputStream.writeUTF(datosRepositorio.getNombreRepositorio());
+                outputStream.writeUTF(datosRepositorio.getDireccionRepositorio());
+
+                for (int i = 0; i < datosRepositorio.getNumeroLibros(); i++)
+                {
+                    TLibro libro = datosRepositorio.getRepositorioLibro().getLibro(i);
+
+                    outputStream.writeUTF(libro.isbn);
+                    outputStream.writeUTF(libro.titulo);
+                    outputStream.writeUTF(libro.autor);
+                    outputStream.writeInt(libro.anio);
+                    outputStream.writeUTF(libro.pais);
+                    outputStream.writeUTF(libro.idioma);
+                    outputStream.writeInt(libro.disponibles);
+                    outputStream.writeInt(libro.prestados);
+                    outputStream.writeInt(libro.reservados);
+                }
+
+                return 1;
+            }
+
+            for (int i = 0; i < this.numRepositoriosCargados; i++)
+            {
+                posEscritura = i+1;
+                TDatosRepositorio datosRepositorio = this.repositoriosCargados.get(i);
+                DataOutputStream outputStream = new DataOutputStream(new FileOutputStream(Paths.get("Biblioteca.jdat_R" + posEscritura + "_").toAbsolutePath().toString()));
+
+                outputStream.writeInt(datosRepositorio.getNumeroLibros());
+                outputStream.writeUTF(datosRepositorio.getNombreRepositorio());
+                outputStream.writeUTF(datosRepositorio.getDireccionRepositorio());
+
+                for (int j = 0; j < datosRepositorio.getNumeroLibros(); j++)
+                {
+                    TLibro libro = datosRepositorio.getRepositorioLibro().getLibro(i);
+
+                    outputStream.writeUTF(libro.isbn);
+                    outputStream.writeUTF(libro.titulo);
+                    outputStream.writeUTF(libro.autor);
+                    outputStream.writeInt(libro.anio);
+                    outputStream.writeUTF(libro.pais);
+                    outputStream.writeUTF(libro.idioma);
+                    outputStream.writeInt(libro.disponibles);
+                    outputStream.writeInt(libro.prestados);
+                    outputStream.writeInt(libro.reservados);
+                }
+            }
+            
+            return 1;
+
+        } catch (FileNotFoundException ex)
+        {
+            System.out.println("Error: " + ex);
+            return 0;
+            
+        } catch (IOException ex)
+        {
+            System.out.println("Error: " + ex);
+            return 0;
+        }
+    }
+
+    @Override
+    public int NuevoLibro(int pIda, TLibro L, int pRepo) throws RemoteException
+    {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public int NuevoLibro(int pIda, TLibro L, int pRepo) throws RemoteException {
+    public int Comprar(int pIda, String pIsbn, int pNoLibros) throws RemoteException
+    {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public int Comprar(int pIda, String pIsbn, int pNoLibros) throws RemoteException {
+    public int Retirar(int pIda, String pIsbn, int pNoLibros) throws RemoteException
+    {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public int Retirar(int pIda, String pIsbn, int pNoLibros) throws RemoteException {
+    public boolean Ordenar(int pIda, int pCampo) throws RemoteException
+    {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public boolean Ordenar(int pIda, int pCampo) throws RemoteException {
+    public int NLibros(int pRepo) throws RemoteException
+    {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public int NLibros(int pRepo) throws RemoteException {
+    public int Buscar(int pIda, String pIsbn) throws RemoteException
+    {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public int Buscar(int pIda, String pIsbn) throws RemoteException {
+    public TLibro Descargar(int pIda, int pRepo, int pPos) throws RemoteException
+    {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public TLibro Descargar(int pIda, int pRepo, int pPos) throws RemoteException {
+    public int Prestar(int pPos) throws RemoteException
+    {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public int Prestar(int pPos) throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
-    public int Devolver(int pPos) throws RemoteException {
+    public int Devolver(int pPos) throws RemoteException
+    {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 

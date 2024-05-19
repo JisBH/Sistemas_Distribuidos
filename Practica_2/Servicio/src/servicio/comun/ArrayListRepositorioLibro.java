@@ -4,6 +4,7 @@
  */
 package servicio.comun;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,7 +12,7 @@ import java.util.List;
  *
  * @author Usuario
  */
-public class ArrayListRepositorioLibro implements RepositorioLibro {
+public class ArrayListRepositorioLibro implements RepositorioLibro, Serializable{
 
     private List<TLibro> libros = new ArrayList<>();
 
@@ -34,6 +35,12 @@ public class ArrayListRepositorioLibro implements RepositorioLibro {
             }
         }
         return null;
+    }
+
+    @Override
+    public TLibro getLibro(int pos)
+    {
+        return libros.get(pos);
     }
 
 }

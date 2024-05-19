@@ -4,13 +4,14 @@
  */
 package servicio.comun;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 /**
  *
  * @author Usuario
  */
-public class TDatosRepositorio {
+public class TDatosRepositorio implements Serializable{
     
     private int numeroLibros;
     private String nombreRepositorio;
