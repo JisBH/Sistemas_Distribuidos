@@ -27,7 +27,8 @@ public class GestorBiblioteca implements GestorBibliotecaIntf
     private int numAdministradores = 0; // Contador con el numero de administradores actualmente en el sistema
     private int idAdmin = -1;	 // Copia del Identificador de Administración enviado al usuario.
     private List<TDatosRepositorio> repositoriosCargados = new ArrayList<>(); // Lista con los repositorios cargados en memoria actualmente
-    private int numRepositoriosCargados = 0;
+    private List<TLibro> librosTodosRepositorios = new ArrayList<>(); // Lista con los libros de todos los repositorios cargados en memoria actualmente
+    
 
     public GestorBiblioteca() throws RemoteException
     {
@@ -79,13 +80,28 @@ public class GestorBiblioteca implements GestorBibliotecaIntf
     @Override
     public int NRepositorios(int pIda) throws RemoteException
     {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        if (pIda != this.idAdmin || this.numAdministradores > 1)
+        {
+            return -1;
+        }
+
+        return this.repositoriosCargados.size();
     }
 
     @Override
     public TDatosRepositorio DatosRepositorio(int pIda, int pPosRepo) throws RemoteException
     {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        if (pIda != this.idAdmin || this.numAdministradores > 1)
+        {
+            return null;
+        }
+        if (pPosRepo < 0 || pPosRepo >= this.repositoriosCargados.size())
+        {
+            return null;
+        }
+
+        return this.repositoriosCargados.get(pPosRepo);
+
     }
 
     @Override
@@ -94,7 +110,7 @@ public class GestorBiblioteca implements GestorBibliotecaIntf
 
         int result;
 
-        if (pIda != idAdmin)
+        if (pIda != this.idAdmin || this.numAdministradores > 1)
         {
             result = -1;
 
@@ -111,7 +127,7 @@ public class GestorBiblioteca implements GestorBibliotecaIntf
                 RepositorioLibro repositorioLibro = new ArrayListRepositorioLibro();
                 TDatosRepositorio datosRepositorio = new TDatosRepositorio(numeroLibros, nombreRepositorio, direccionRepositorio, repositorioLibro);
 
-                if (repositoriosCargados.contains(datosRepositorio))
+                if (this.repositoriosCargados.contains(datosRepositorio))
                 {
                     result = -2;
                 } else
@@ -130,10 +146,11 @@ public class GestorBiblioteca implements GestorBibliotecaIntf
 
                         TLibro libro = new TLibro(titulo, autor, pais, idioma, isbn, anio, disponible, prestado, reservado);
                         datosRepositorio.getRepositorioLibro().aniadirLibro(libro);
+                        this.librosTodosRepositorios.add(libro);
                     }
 
-                    repositoriosCargados.add(datosRepositorio);
-                    numRepositoriosCargados++;
+                    this.repositoriosCargados.add(datosRepositorio);
+                    
                     result = 1;
                 }
 
@@ -154,14 +171,19 @@ public class GestorBiblioteca implements GestorBibliotecaIntf
     @Override
     public int GuardarRepositorio(int pIda, int pRepo) throws RemoteException
     {
-        int posEscritura = pRepo+1;
+        if (this.repositoriosCargados.size() == 0)
+        {
+            return -2;
+        }
 
-        if (pIda != idAdmin)
+        int posEscritura = pRepo + 1;
+
+        if (pIda != this.idAdmin || this.numAdministradores > 1)
         {
             return -1;
         }
 
-        if (pRepo < -1 || pRepo >= numRepositoriosCargados)
+        if (pRepo < -1 || pRepo >= this.repositoriosCargados.size())
         {
             return -2;
         }
@@ -196,9 +218,9 @@ public class GestorBiblioteca implements GestorBibliotecaIntf
                 return 1;
             }
 
-            for (int i = 0; i < this.numRepositoriosCargados; i++)
+            for (int i = 0; i < this.repositoriosCargados.size(); i++)
             {
-                posEscritura = i+1;
+                posEscritura = i + 1;
                 TDatosRepositorio datosRepositorio = this.repositoriosCargados.get(i);
                 DataOutputStream outputStream = new DataOutputStream(new FileOutputStream(Paths.get("Biblioteca.jdat_R" + posEscritura + "_").toAbsolutePath().toString()));
 
@@ -221,14 +243,14 @@ public class GestorBiblioteca implements GestorBibliotecaIntf
                     outputStream.writeInt(libro.reservados);
                 }
             }
-            
+
             return 1;
 
         } catch (FileNotFoundException ex)
         {
             System.out.println("Error: " + ex);
             return 0;
-            
+
         } catch (IOException ex)
         {
             System.out.println("Error: " + ex);
@@ -239,13 +261,70 @@ public class GestorBiblioteca implements GestorBibliotecaIntf
     @Override
     public int NuevoLibro(int pIda, TLibro L, int pRepo) throws RemoteException
     {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+
+        if (pIda != this.idAdmin || this.numAdministradores > 1)
+        {
+            return -1;
+        }
+
+        if (pRepo < 0 || pRepo >= this.repositoriosCargados.size())
+        {
+            return -2;
+        }
+
+        TDatosRepositorio datosRepositorio;
+
+        for (int i = 0; i < this.repositoriosCargados.size(); i++)
+        {
+            datosRepositorio = this.repositoriosCargados.get(i);
+            if (datosRepositorio.getRepositorioLibro().getLibroPorIsbn(L.getIsbn()) != null)
+            {
+                return 0;
+            }
+        }
+
+        datosRepositorio = this.repositoriosCargados.get(pRepo);
+
+        datosRepositorio.getRepositorioLibro().aniadirLibro(L);
+        datosRepositorio.setNumeroLibros(datosRepositorio.getNumeroLibros() + 1);
+        this.librosTodosRepositorios.add(L);
+
+        return 1;
+
     }
 
     @Override
     public int Comprar(int pIda, String pIsbn, int pNoLibros) throws RemoteException
     {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        if(pIda != this.idAdmin)
+        {
+            return -1;
+        }
+        
+        int posLibro = Buscar(pIda, pIsbn);
+        
+        if (posLibro == -1)
+        {
+            return 0;
+        }
+        
+        TLibro libro = this.librosTodosRepositorios.get(posLibro);      
+        libro.setDisponibles(libro.getDisponibles() + pNoLibros);
+        
+        if(libro.getDisponibles() >= libro.getReservados())
+        {
+            libro.setDisponibles(libro.getDisponibles() - libro.getReservados());
+            libro.setPrestados(libro.getPrestados() + libro.getReservados());
+            libro.setReservados(0);  
+        }
+        else
+        {
+            libro.setReservados(libro.getReservados() - libro.getDisponibles());
+            libro.setPrestados(libro.getPrestados() + libro.getDisponibles());
+            libro.setDisponibles(0);
+        }
+        
+        return 1;
     }
 
     @Override
@@ -263,19 +342,91 @@ public class GestorBiblioteca implements GestorBibliotecaIntf
     @Override
     public int NLibros(int pRepo) throws RemoteException
     {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        if (pRepo == -1)
+        {
+            return this.librosTodosRepositorios.size();
+        }
+
+        if (pRepo >= this.repositoriosCargados.size() || pRepo < 0)
+        {
+            return -1;
+        }
+        return this.repositoriosCargados.get(pRepo).getRepositorioLibro().numLibros();
     }
 
     @Override
     public int Buscar(int pIda, String pIsbn) throws RemoteException
     {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        if (pIda != this.idAdmin)
+        {
+            return -2;
+        }
+
+        for (int i = 0; i < this.librosTodosRepositorios.size(); i++)
+        {
+            TLibro libro = this.librosTodosRepositorios.get(i);
+
+            if (pIsbn.equals(libro.getIsbn()))
+            {
+                return i;
+            }
+        }
+
+        return -1;
     }
 
     @Override
-    public TLibro Descargar(int pIda, int pRepo, int pPos) throws RemoteException
+     public TLibro Descargar(int pIda, int pRepo, int pPos) throws RemoteException
     {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        if (pRepo == -1)
+        {
+            if (pPos >= this.librosTodosRepositorios.size() || pPos < 0)
+            {
+                return null;
+            }
+
+            TLibro libro = null;
+
+            
+                libro = (TLibro) this.librosTodosRepositorios.get(pPos);
+                TLibro copiaLibro = new TLibro(libro.titulo,libro.autor,libro.pais,libro.idioma,libro.isbn,libro.anio,libro.disponibles,libro.prestados,libro.reservados);
+
+                if (pIda != this.idAdmin)
+                {
+                    copiaLibro.setReservados(0);
+                    copiaLibro.setPrestados(0);
+                }
+            
+
+            return copiaLibro;
+        }
+
+        if (pRepo >= this.repositoriosCargados.size() || pRepo < 0)
+                
+        {
+            return null;
+        }
+
+        TDatosRepositorio datosRepositorio = this.repositoriosCargados.get(pRepo);
+
+        List<TLibro> librosRepositorios = datosRepositorio.getRepositorioLibro().getTodosLibros();
+
+        TLibro libro = null;
+
+        if (pPos < 0 || pPos >= librosRepositorios.size())
+        {
+            return null;
+        }
+
+            libro = (TLibro) librosRepositorios.get(pPos);
+            TLibro copiaLibro = new TLibro(libro.titulo,libro.autor,libro.pais,libro.idioma,libro.isbn,libro.anio,libro.disponibles,libro.prestados,libro.reservados);
+            if (pIda != this.idAdmin)
+            {
+                copiaLibro.setReservados(0);
+                copiaLibro.setPrestados(0);
+            }
+
+        return copiaLibro;
     }
 
     @Override
@@ -290,7 +441,13 @@ public class GestorBiblioteca implements GestorBibliotecaIntf
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
-    /*código para Ordenar una estructura de datos que tenga definido el método sort.
+
+
+
+
+
+/*
+    código para Ordenar una estructura de datos que tenga definido el método sort.
 ********************************************************************************
 
 Libros.sort(new Comparator<TLibro>() {
@@ -328,48 +485,5 @@ Libros.sort(new Comparator<TLibro>() {
         }
         return C;
     }
-});
-
-
-Código para mostrar un libro y su cabecera en caso necesario.
-*************************************************************
-
-private String Ajustar(String S, int Ancho) {
-    byte v[] = S.getBytes();
-    int c = 0;
-    int len = 0;
-    int uin;
-    for (int i = 0; i < v.length; i++) {
-        uin = Byte.toUnsignedInt(v[i]);
-        if (uin > 128) {
-            c++;
-        }
-    }
-
-    len = c / 2;
-
-    for (int i = 0; i < len; i++) {
-        S = S + " ";
-    }
-
-    return S;
-}
-
-public void Mostrar(int Pos, boolean Cabecera) {
-    if (Cabecera) {
-        System.out.println(String.format("%-5s%-58s%-18s%-4s%-4s%-4s", "POS", "TITULO", "ISBN", "DIS", "PRE", "RES"));
-        System.out.println(String.format("     %-30s%-28s%-12s", "AUTOR", "PAIS (IDIOMA)", "AÑO"));
-        for (int i = 0; i < 93; i++) {
-            System.out.print("*");
-        }
-        System.out.print("\n");
-    }
-
-    String T = Ajustar(String.format("%-58s", Titulo), 58);
-    String A = Ajustar(String.format("%-30s", Autor), 30);
-    String PI = Ajustar(String.format("%-28s", Pais + " (" + Idioma + ")"), 28);
-
-    System.out.println(String.format("%-5d%s%-18s%-4d%-4d%-4d", Pos + 1, T, Isbn, NoLibros, NoPrestados, NoListaEspera));
-    System.out.println(String.format("     %s%s%-12d", A, PI, Anio));
-}*/
+});*/
 }

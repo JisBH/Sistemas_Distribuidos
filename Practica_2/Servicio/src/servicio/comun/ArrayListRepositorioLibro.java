@@ -12,25 +12,31 @@ import java.util.List;
  *
  * @author Usuario
  */
-public class ArrayListRepositorioLibro implements RepositorioLibro, Serializable{
+public class ArrayListRepositorioLibro implements RepositorioLibro, Serializable
+{
 
     private List<TLibro> libros = new ArrayList<>();
 
     @Override
-    public void aniadirLibro(TLibro libro) {
+    public void aniadirLibro(TLibro libro)
+    {
         this.libros.add(libro);
     }
 
     @Override
-    public void eliminarLibro(TLibro libro) {
+    public void eliminarLibro(TLibro libro)
+    {
         this.libros.remove(libro);
     }
 
     @Override
-    public TLibro getLibroPorIsbn(String isbn) {
+    public TLibro getLibroPorIsbn(String isbn)
+    {
 
-        for (TLibro libro : libros) {
-            if (libro.isbn.equals(isbn)) {
+        for (TLibro libro : libros)
+        {
+            if (libro.isbn.equals(isbn))
+            {
                 return libro;
             }
         }
@@ -41,6 +47,18 @@ public class ArrayListRepositorioLibro implements RepositorioLibro, Serializable
     public TLibro getLibro(int pos)
     {
         return libros.get(pos);
+    }
+
+    @Override
+    public int numLibros()
+    {
+        return libros.size();
+    }
+
+    @Override
+    public List<TLibro> getTodosLibros()
+    {
+        return libros;
     }
 
 }

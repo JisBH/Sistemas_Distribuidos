@@ -11,8 +11,9 @@ import java.util.Objects;
  *
  * @author Usuario
  */
-public class TLibro implements Serializable {
-    
+public class TLibro implements Serializable
+{
+
     public String titulo;
     public String autor;
     public String pais;
@@ -23,10 +24,12 @@ public class TLibro implements Serializable {
     public int prestados;
     public int reservados;
 
-    public TLibro() {
+    public TLibro()
+    {
     }
 
-    public TLibro(String titulo, String autor, String pais, String idioma, String isbn, int anio, int disponibles, int prestados, int reservados) {
+    public TLibro(String titulo, String autor, String pais, String idioma, String isbn, int anio, int disponibles, int prestados, int reservados)
+    {
         this.titulo = titulo;
         this.autor = autor;
         this.pais = pais;
@@ -38,80 +41,99 @@ public class TLibro implements Serializable {
         this.reservados = reservados;
     }
 
-    public String getTitulo() {
+    public String getTitulo()
+    {
         return titulo;
     }
 
-    public void setTitulo(String titulo) {
+    public void setTitulo(String titulo)
+    {
         this.titulo = titulo;
     }
 
-    public String getAutor() {
+    public String getAutor()
+    {
         return autor;
     }
 
-    public void setAutor(String autor) {
+    public void setAutor(String autor)
+    {
         this.autor = autor;
     }
 
-    public String getPais() {
+    public String getPais()
+    {
         return pais;
     }
 
-    public void setPais(String pais) {
+    public void setPais(String pais)
+    {
         this.pais = pais;
     }
 
-    public String getIdioma() {
+    public String getIdioma()
+    {
         return idioma;
     }
 
-    public void setIdioma(String idioma) {
+    public void setIdioma(String idioma)
+    {
         this.idioma = idioma;
     }
 
-    public String getIsbn() {
+    public String getIsbn()
+    {
         return isbn;
     }
 
-    public void setIsbn(String isbn) {
+    public void setIsbn(String isbn)
+    {
         this.isbn = isbn;
     }
 
-    public int getAnio() {
+    public int getAnio()
+    {
         return anio;
     }
 
-    public void setAnio(int anio) {
+    public void setAnio(int anio)
+    {
         this.anio = anio;
     }
 
-    public int getDisponibles() {
+    public int getDisponibles()
+    {
         return disponibles;
     }
 
-    public void setDisponibles(int disponibles) {
+    public void setDisponibles(int disponibles)
+    {
         this.disponibles = disponibles;
     }
 
-    public int getPrestados() {
+    public int getPrestados()
+    {
         return prestados;
     }
 
-    public void setPrestados(int prestados) {
+    public void setPrestados(int prestados)
+    {
         this.prestados = prestados;
     }
 
-    public int getReservados() {
+    public int getReservados()
+    {
         return reservados;
     }
 
-    public void setReservados(int reservados) {
+    public void setReservados(int reservados)
+    {
         this.reservados = reservados;
     }
 
     @Override
-    public int hashCode() {
+    public int hashCode()
+    {
         int hash = 3;
         hash = 97 * hash + Objects.hashCode(this.titulo);
         hash = 97 * hash + Objects.hashCode(this.autor);
@@ -126,46 +148,59 @@ public class TLibro implements Serializable {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
+    public boolean equals(Object obj)
+    {
+        if (this == obj)
+        {
             return true;
         }
-        if (obj == null) {
+        if (obj == null)
+        {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if (getClass() != obj.getClass())
+        {
             return false;
         }
         final TLibro other = (TLibro) obj;
-        if (this.anio != other.anio) {
+        if (this.anio != other.anio)
+        {
             return false;
         }
-        if (this.disponibles != other.disponibles) {
+        if (this.disponibles != other.disponibles)
+        {
             return false;
         }
-        if (this.prestados != other.prestados) {
+        if (this.prestados != other.prestados)
+        {
             return false;
         }
-        if (this.reservados != other.reservados) {
+        if (this.reservados != other.reservados)
+        {
             return false;
         }
-        if (!Objects.equals(this.titulo, other.titulo)) {
+        if (!Objects.equals(this.titulo, other.titulo))
+        {
             return false;
         }
-        if (!Objects.equals(this.autor, other.autor)) {
+        if (!Objects.equals(this.autor, other.autor))
+        {
             return false;
         }
-        if (!Objects.equals(this.pais, other.pais)) {
+        if (!Objects.equals(this.pais, other.pais))
+        {
             return false;
         }
-        if (!Objects.equals(this.idioma, other.idioma)) {
+        if (!Objects.equals(this.idioma, other.idioma))
+        {
             return false;
         }
         return Objects.equals(this.isbn, other.isbn);
     }
 
     @Override
-    public String toString() {
+    public String toString()
+    {
         StringBuilder sb = new StringBuilder();
         sb.append("TLibro{");
         sb.append("titulo=").append(titulo);

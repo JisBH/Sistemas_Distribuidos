@@ -6,7 +6,8 @@ import java.rmi.*;
  *
  * @author Usuario
  */
-public interface GestorBibliotecaIntf extends Remote {
+public interface GestorBibliotecaIntf extends Remote
+{
 
     //Sevicios de Conexión
     int Conexion(String pPasswd) throws RemoteException;

@@ -14,11 +14,14 @@ import java.util.Scanner;
  *
  * @author Usuario
  */
-public class Servidor {
+public class Servidor
+{
 
-    public static void main(String[] args) throws RemoteException {
+    public static void main(String[] args) throws RemoteException
+    {
 
-        try {
+        try
+        {
             int Puerto = 0;
             Scanner Teclado = new Scanner(System.in);
             System.out.print("Introduce el nº de puerto para comunicarse: ");
@@ -33,8 +36,9 @@ public class Servidor {
             registry.bind("GestorBiblioteca", stub);
 
             System.out.println("Servidor GestorBiblioteca esperando peticiones ... ");
-            
-        } catch (Exception e) {
+
+        } catch (Exception e)
+        {
             System.out.println("Error en servidor GestorBiblioteca:" + e);
         }
     }
