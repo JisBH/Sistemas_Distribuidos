@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 import servicio.comun.ArrayListRepositorioLibro;
@@ -16,6 +17,7 @@ import servicio.comun.GestorBibliotecaIntf;
 import servicio.comun.RepositorioLibro;
 import servicio.comun.TDatosRepositorio;
 import servicio.comun.TLibro;
+import servicio.comun.ComparadorLibro;
 
 /**
  *
@@ -28,7 +30,7 @@ public class GestorBiblioteca implements GestorBibliotecaIntf
     private int idAdmin = -1;	 // Copia del Identificador de Administración enviado al usuario.
     private List<TDatosRepositorio> repositoriosCargados = new ArrayList<>(); // Lista con los repositorios cargados en memoria actualmente
     private List<TLibro> librosTodosRepositorios = new ArrayList<>(); // Lista con los libros de todos los repositorios cargados en memoria actualmente
-    
+    private int campoOrdenacion = 0;
 
     public GestorBiblioteca() throws RemoteException
     {
@@ -150,7 +152,8 @@ public class GestorBiblioteca implements GestorBibliotecaIntf
                     }
 
                     this.repositoriosCargados.add(datosRepositorio);
-                    
+                    Ordenar(pIda, this.campoOrdenacion);
+
                     result = 1;
                 }
 
@@ -288,6 +291,8 @@ public class GestorBiblioteca implements GestorBibliotecaIntf
         datosRepositorio.getRepositorioLibro().aniadirLibro(L);
         datosRepositorio.setNumeroLibros(datosRepositorio.getNumeroLibros() + 1);
         this.librosTodosRepositorios.add(L);
+        Comparator comp = new ComparadorLibro(this.campoOrdenacion);
+        datosRepositorio.getRepositorioLibro().getTodosLibros().sort(comp);
 
         return 1;
 
@@ -296,47 +301,134 @@ public class GestorBiblioteca implements GestorBibliotecaIntf
     @Override
     public int Comprar(int pIda, String pIsbn, int pNoLibros) throws RemoteException
     {
-        if(pIda != this.idAdmin)
+        if (pIda != this.idAdmin)
         {
             return -1;
         }
-        
+
         int posLibro = Buscar(pIda, pIsbn);
-        
+
         if (posLibro == -1)
         {
             return 0;
         }
-        
-        TLibro libro = this.librosTodosRepositorios.get(posLibro);      
+
+        TLibro libro = this.librosTodosRepositorios.get(posLibro);
         libro.setDisponibles(libro.getDisponibles() + pNoLibros);
-        
-        if(libro.getDisponibles() >= libro.getReservados())
+
+        if (libro.getDisponibles() >= libro.getReservados())
         {
             libro.setDisponibles(libro.getDisponibles() - libro.getReservados());
             libro.setPrestados(libro.getPrestados() + libro.getReservados());
-            libro.setReservados(0);  
-        }
-        else
+            libro.setReservados(0);
+        } else
         {
             libro.setReservados(libro.getReservados() - libro.getDisponibles());
             libro.setPrestados(libro.getPrestados() + libro.getDisponibles());
             libro.setDisponibles(0);
         }
         
+        //Codigo para ordenar el repositorio que contiene el libro
+        int i = 0;
+        boolean encontrado = false;
+
+        while (i < this.repositoriosCargados.size() && !encontrado)
+        {
+            TDatosRepositorio datosRepositorio = this.repositoriosCargados.get(i);
+
+            if (datosRepositorio.getRepositorioLibro().getLibroPorIsbn(pIsbn) != null)
+            {
+                encontrado = true;
+
+            } else
+            {
+                i++;
+            }
+        }
+        // i tiene el repositorio en el que esta el libro
+        // Ordenamos el repositorio
+        Comparator comp = new ComparadorLibro(this.campoOrdenacion);
+        this.repositoriosCargados.get(i).getRepositorioLibro().getTodosLibros().sort(comp);
+
         return 1;
     }
 
     @Override
     public int Retirar(int pIda, String pIsbn, int pNoLibros) throws RemoteException
     {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        if (pIda != this.idAdmin)
+        {
+            return -1;
+        }
+
+        int posLibro = Buscar(pIda, pIsbn);
+
+        if (posLibro == -1)
+        {
+            return 0;
+        }
+
+        TLibro libro = this.librosTodosRepositorios.get(posLibro);
+
+        if (libro.getDisponibles() >= pNoLibros)
+        {
+            libro.setDisponibles(libro.getDisponibles() - pNoLibros);
+
+        } else
+        {
+            return 2;
+        }
+        
+        //Codigo para ordenar el repositorio que contiene el libro
+        int i = 0;
+        boolean encontrado = false;
+
+        while (i < this.repositoriosCargados.size() && !encontrado)
+        {
+            TDatosRepositorio datosRepositorio = this.repositoriosCargados.get(i);
+
+            if (datosRepositorio.getRepositorioLibro().getLibroPorIsbn(pIsbn) != null)
+            {
+                encontrado = true;
+
+            } else
+            {
+                i++;
+            }
+        }
+        // i tiene el repositorio en el que esta el libro
+        // Ordenamos el repositorio
+        Comparator comp = new ComparadorLibro(this.campoOrdenacion);
+        this.repositoriosCargados.get(i).getRepositorioLibro().getTodosLibros().sort(comp);
+
+        return 1;
     }
 
     @Override
     public boolean Ordenar(int pIda, int pCampo) throws RemoteException
     {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        if (pIda != this.idAdmin)
+        {
+            return false;
+        }
+
+        if (pCampo < 0 || pCampo > 8)
+        {
+            return false;
+        }
+
+        Comparator comp = new ComparadorLibro(pCampo);
+
+        this.librosTodosRepositorios.sort(comp);
+
+        for (TDatosRepositorio repositorio : this.repositoriosCargados)
+        {
+            repositorio.getRepositorioLibro().getTodosLibros().sort(comp);
+        }
+
+        this.campoOrdenacion = pCampo;
+
+        return true;
     }
 
     @Override
@@ -376,7 +468,7 @@ public class GestorBiblioteca implements GestorBibliotecaIntf
     }
 
     @Override
-     public TLibro Descargar(int pIda, int pRepo, int pPos) throws RemoteException
+    public TLibro Descargar(int pIda, int pRepo, int pPos) throws RemoteException
     {
         if (pRepo == -1)
         {
@@ -387,22 +479,20 @@ public class GestorBiblioteca implements GestorBibliotecaIntf
 
             TLibro libro = null;
 
-            
-                libro = (TLibro) this.librosTodosRepositorios.get(pPos);
-                TLibro copiaLibro = new TLibro(libro.titulo,libro.autor,libro.pais,libro.idioma,libro.isbn,libro.anio,libro.disponibles,libro.prestados,libro.reservados);
+            libro = (TLibro) this.librosTodosRepositorios.get(pPos);
+            TLibro copiaLibro = new TLibro(libro.titulo, libro.autor, libro.pais, libro.idioma, libro.isbn, libro.anio, libro.disponibles, libro.prestados, libro.reservados);
 
-                if (pIda != this.idAdmin)
-                {
-                    copiaLibro.setReservados(0);
-                    copiaLibro.setPrestados(0);
-                }
-            
+            if (pIda != this.idAdmin)
+            {
+                copiaLibro.setReservados(0);
+                copiaLibro.setPrestados(0);
+            }
 
             return copiaLibro;
         }
 
         if (pRepo >= this.repositoriosCargados.size() || pRepo < 0)
-                
+
         {
             return null;
         }
@@ -418,13 +508,13 @@ public class GestorBiblioteca implements GestorBibliotecaIntf
             return null;
         }
 
-            libro = (TLibro) librosRepositorios.get(pPos);
-            TLibro copiaLibro = new TLibro(libro.titulo,libro.autor,libro.pais,libro.idioma,libro.isbn,libro.anio,libro.disponibles,libro.prestados,libro.reservados);
-            if (pIda != this.idAdmin)
-            {
-                copiaLibro.setReservados(0);
-                copiaLibro.setPrestados(0);
-            }
+        libro = (TLibro) librosRepositorios.get(pPos);
+        TLibro copiaLibro = new TLibro(libro.titulo, libro.autor, libro.pais, libro.idioma, libro.isbn, libro.anio, libro.disponibles, libro.prestados, libro.reservados);
+        if (pIda != this.idAdmin)
+        {
+            copiaLibro.setReservados(0);
+            copiaLibro.setPrestados(0);
+        }
 
         return copiaLibro;
     }
@@ -432,58 +522,94 @@ public class GestorBiblioteca implements GestorBibliotecaIntf
     @Override
     public int Prestar(int pPos) throws RemoteException
     {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        if (pPos < 0 || pPos >= this.librosTodosRepositorios.size())
+        {
+            return -1;
+        }
+        
+        TLibro libro = this.librosTodosRepositorios.get(pPos);
+        
+        //Codigo para ordenar el repositorio que contiene el libro
+        int i = 0;
+        boolean encontrado = false;
+
+        while (i < this.repositoriosCargados.size() && !encontrado)
+        {
+            TDatosRepositorio datosRepositorio = this.repositoriosCargados.get(i);
+
+            if (datosRepositorio.getRepositorioLibro().getLibroPorIsbn(libro.getIsbn()) != null)
+            {
+                encontrado = true;
+
+            } else
+            {
+                i++;
+            }
+        }
+        // i tiene el repositorio en el que esta el libro
+        // Ordenamos el repositorio
+        Comparator comp = new ComparadorLibro(this.campoOrdenacion);
+        
+        if (libro.getDisponibles() > 0)
+        {
+            libro.setDisponibles(libro.getDisponibles() - 1);
+            libro.setPrestados(libro.getPrestados() + 1);
+            this.repositoriosCargados.get(i).getRepositorioLibro().getTodosLibros().sort(comp);
+            return 1;
+        }
+
+        libro.setReservados(libro.getReservados() + 1);
+        this.repositoriosCargados.get(i).getRepositorioLibro().getTodosLibros().sort(comp);
+        return 0;
+
     }
 
     @Override
     public int Devolver(int pPos) throws RemoteException
     {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-
-
-
-
-
-/*
-    código para Ordenar una estructura de datos que tenga definido el método sort.
-********************************************************************************
-
-Libros.sort(new Comparator<TLibro>() {
-    @Override
-    public int compare(TLibro o1, TLibro o2) {
-        int C = 0;
-        switch (CampoOrdenacion) {
-            case 0:
-                C = o1.getIsbn().compareTo(o2.getIsbn());
-                break;
-            case 1:
-                C = o1.getTitulo().compareTo(o2.getTitulo());
-                break;
-            case 2:
-                C = o1.getAutor().compareTo(o2.getAutor());
-                break;
-            case 3:
-                C = Integer.compare(o1.getAnio(), o2.getAnio());
-                break;
-            case 4:
-                C = o1.getPais().compareTo(o2.getPais());
-                break;
-            case 5:
-                C = o1.getPais().compareTo(o2.getPais());
-                break;
-            case 6:
-                C = Integer.compare(o1.getNoLibros(), o2.getNoLibros());
-                break;
-            case 7:
-                C = Integer.compare(o1.getNoPrestados(), o2.getNoPrestados());
-                break;
-            case 8:
-                C = Integer.compare(o1.getNoListaEspera(), o2.getNoListaEspera());
-                break;
+        if (pPos < 0 || pPos >= this.librosTodosRepositorios.size())
+        {
+            return -1;
         }
-        return C;
+        
+        TLibro libro = this.librosTodosRepositorios.get(pPos);
+        
+        //Codigo para ordenar el repositorio que contiene el libro
+        int i = 0;
+        boolean encontrado = false;
+
+        while (i < this.repositoriosCargados.size() && !encontrado)
+        {
+            TDatosRepositorio datosRepositorio = this.repositoriosCargados.get(i);
+
+            if (datosRepositorio.getRepositorioLibro().getLibroPorIsbn(libro.getIsbn()) != null)
+            {
+                encontrado = true;
+
+            } else
+            {
+                i++;
+            }
+        }
+        // i tiene el repositorio en el que esta el libro
+        // Ordenamos el repositorio
+        Comparator comp = new ComparadorLibro(this.campoOrdenacion);
+        
+        if (libro.getReservados() == 0 && libro.getPrestados() > 0)
+        {
+            libro.setPrestados(libro.getPrestados() - 1);
+            libro.setDisponibles(libro.getDisponibles() + 1);          
+            this.repositoriosCargados.get(i).getRepositorioLibro().getTodosLibros().sort(comp);
+            return 1;
+        }
+        
+        if(libro.getReservados() > 0 && libro.getPrestados() > 0){
+            libro.setReservados(libro.getReservados() - 1);
+            this.repositoriosCargados.get(i).getRepositorioLibro().getTodosLibros().sort(comp);
+            return 0;
+        }
+
+        return 2;
     }
-});*/
+
 }

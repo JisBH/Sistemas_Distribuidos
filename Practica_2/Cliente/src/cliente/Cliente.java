@@ -336,10 +336,299 @@ public class Cliente
         return -3;
     }
 
+    private int funcRetirar(int pIda, GestorBibliotecaIntf biblioStub, String pIsbn, int pNoLibros)
+    {
+
+        try
+        {
+            return biblioStub.Retirar(pIda, pIsbn, pNoLibros);
+
+        } catch (RemoteException ex)
+        {
+            System.out.println("Se ha producido un error en la funcion retirar");
+        }
+
+        return -3;
+    }
+
+    private boolean funcOrdenar(int pIda, GestorBibliotecaIntf biblioStub, int pCampo)
+    {
+
+        try
+        {
+            return biblioStub.Ordenar(pIda, pCampo);
+
+        } catch (RemoteException ex)
+        {
+            System.out.println("Se ha producido un error en la funcion ordenar");
+        }
+        return false;
+    }
+
+    private int funcPrestar(int pPos, GestorBibliotecaIntf biblioStub)
+    {
+
+        try
+        {
+            return biblioStub.Prestar(pPos);
+
+        } catch (RemoteException ex)
+        {
+            System.out.println("Se ha producido un error en la funcion prestar");
+        }
+        return -3;
+    }
+
+    private int funcDevolver(int pPos, GestorBibliotecaIntf biblioStub)
+    {
+
+        try
+        {
+            return biblioStub.Devolver(pPos);
+
+        } catch (RemoteException ex)
+        {
+            System.out.println("Se ha producido un error en la funcion devolver");
+        }
+        return -3;
+    }
+
+    private boolean filtrarLibros(int ida, GestorBibliotecaIntf biblioStub, boolean admin)
+    {
+        Scanner teclado = new Scanner(System.in);
+        int nlibros, contador = 0, reposOpcion, numRepos;
+        TLibro libro;
+        boolean mostrar = true, cargado = true, opcion_correcta = true, encontrado = false;
+        String texto;
+        char opcion;
+
+        System.out.println("Introduce el texto a buscar: ");
+        texto = teclado.nextLine();
+        System.out.println("\nCódigo de Búsqueda\n");
+        System.out.println("I.- Por Isbn\n");
+        System.out.println("T.- Por Titulo\n");
+        System.out.println("A.- Por Autor\n");
+        System.out.println("P.- Por Pais\n");
+        System.out.println("D.- Por Idioma\n");
+        System.out.println("*.- Por todos los campos\n");
+        System.out.print("\nIntroduce el Código: ");
+        opcion = teclado.next().charAt(0);
+        // Limpieza buffer
+        teclado.nextLine();
+        System.out.println("\n");
+
+        if (admin)
+        {
+            numRepos = funcNRepositorios(ida, biblioStub);
+
+            if (numRepos == 0)
+            {
+                System.out.println("Error, no hay ningun repositorio cargado");
+                System.out.println("Presiona una tecla para continuar");
+                teclado.nextLine();
+                return false;
+            }
+
+            obtenerListaRepositorios(ida, biblioStub, true);
+
+            do
+            {
+                System.out.print("Elige repositorio: ");
+                reposOpcion = teclado.nextInt();
+                // Limpieza buffer
+                teclado.nextLine();
+                System.out.println("");
+
+                if (reposOpcion < 0 || reposOpcion > numRepos)
+                {
+                    System.out.println("\nError, debes elegir un repositorio valido");
+
+                }
+
+            } while (reposOpcion < 0 || reposOpcion > numRepos);
+
+        } else
+        {
+            reposOpcion = 0;
+            nlibros = funcNLibros(-1, biblioStub);
+
+            if (nlibros == 0)
+            {
+                System.out.println("Error, no hay ningun repositorio cargado");
+                System.out.println("Presiona una tecla para continuar");
+                teclado.nextLine();
+                return false;
+            }
+        }
+
+        switch (opcion)
+        {
+
+            case 'i':
+            case 'I':
+                nlibros = funcNLibros(reposOpcion - 1, biblioStub);
+
+                for (int i = 0; i < nlibros; i++)
+                {
+                    libro = funcDescargar(ida, biblioStub, reposOpcion - 1, i);
+
+                    if (texto.equalsIgnoreCase(libro.getIsbn()))
+                    {
+                        Mostrar(i, mostrar, libro);
+                        contador++;
+                        mostrar = false;
+                    }
+                }
+
+                break;
+
+            case 't':
+            case 'T':
+
+                nlibros = funcNLibros(reposOpcion - 1, biblioStub);
+
+                for (int i = 0; i < nlibros; i++)
+                {
+                    libro = funcDescargar(ida, biblioStub, reposOpcion - 1, i);
+
+                    if (texto.equalsIgnoreCase(libro.getTitulo()))
+                    {
+                        Mostrar(i, mostrar, libro);
+                        contador++;
+                        mostrar = false;
+                    }
+                }
+
+                break;
+
+            case 'a':
+            case 'A':
+
+                nlibros = funcNLibros(reposOpcion - 1, biblioStub);
+
+                for (int i = 0; i < nlibros; i++)
+                {
+                    libro = funcDescargar(ida, biblioStub, reposOpcion - 1, i);
+
+                    if (texto.equalsIgnoreCase(libro.getAutor()))
+                    {
+                        Mostrar(i, mostrar, libro);
+                        contador++;
+                        mostrar = false;
+                    }
+                }
+
+                break;
+
+            case 'p':
+            case 'P':
+
+                nlibros = funcNLibros(reposOpcion - 1, biblioStub);
+
+                for (int i = 0; i < nlibros; i++)
+                {
+                    libro = funcDescargar(ida, biblioStub, reposOpcion - 1, i);
+
+                    if (texto.equalsIgnoreCase(libro.getPais()))
+                    {
+                        Mostrar(i, mostrar, libro);
+
+                        contador++;
+                        mostrar = false;
+                    }
+
+                }
+
+                break;
+
+            case 'd':
+            case 'D':
+
+                nlibros = funcNLibros(reposOpcion - 1, biblioStub);
+
+                for (int i = 0; i < nlibros; i++)
+                {
+                    libro = funcDescargar(ida, biblioStub, reposOpcion - 1, i);
+
+                    if (texto.equalsIgnoreCase(libro.getPais()))
+                    {
+                        Mostrar(i, mostrar, libro);
+                        contador++;
+                        mostrar = false;
+                    }
+                }
+
+                break;
+
+            case '*':
+
+                nlibros = funcNLibros(reposOpcion - 1, biblioStub);
+
+                for (int i = 0; i < nlibros; i++)
+                {
+                    libro = funcDescargar(ida, biblioStub, reposOpcion - 1, i);
+
+                    if (texto.equalsIgnoreCase(libro.getIsbn()))
+                    {
+                        Mostrar(i, mostrar, libro);
+                        contador++;
+                        mostrar = false;
+
+                    } else if (texto.equalsIgnoreCase(libro.getTitulo()))
+                    {
+                        Mostrar(i, mostrar, libro);
+                        contador++;
+                        mostrar = false;
+
+                    } else if (texto.equalsIgnoreCase(libro.getAutor()))
+                    {
+                        Mostrar(i, mostrar, libro);
+                        contador++;
+                        mostrar = false;
+
+                    } else if (texto.equalsIgnoreCase(libro.getPais()))
+                    {
+                        Mostrar(i, mostrar, libro);
+                        contador++;
+                        mostrar = false;
+
+                    } else if (texto.equalsIgnoreCase(libro.getIdioma()))
+                    {
+                        Mostrar(i, mostrar, libro);
+                        contador++;
+                        mostrar = false;
+                    }
+                }
+
+                break;
+
+            default:
+                System.out.println("\nError, se debe seleccionar una de las opciones indicadas\n");
+                teclado.nextLine();
+                opcion_correcta = false;
+        }
+
+        if (contador != 0)
+        {
+            System.out.println("\nPresiona una tecla para continuar...\n");
+            teclado.nextLine();
+            encontrado = true;
+
+        } else if (opcion_correcta == true)
+        {
+            System.out.println("\nNo se han encontrado coincidencias...\n");
+            teclado.nextLine();
+        }
+
+        return encontrado;
+
+    }
+
     private void gestionAdministracion(int ida, GestorBibliotecaIntf biblioStub)
     {
         int opcionMenuAdministracion;
         boolean desconexion = false;
+        boolean res = false;
         int resultado;
         Scanner teclado = new Scanner(System.in);
         String nombreFichero;
@@ -495,7 +784,7 @@ public class Cliente
                             siNo = teclado.next().charAt(0);
                             siNo = Character.toLowerCase(siNo);
                             teclado.nextLine(); //Limpia el buffer
-                            
+
                             if (siNo != 's' && siNo != 'n')
                             {
                                 System.out.println("Error, debes seleccionar s o n");
@@ -533,15 +822,109 @@ public class Cliente
                     break;
 
                 case 5:
+                    System.out.println("Introduce ISBN a buscar: ");
+                    isbn = teclado.nextLine();
+                    resultado = funcBuscar(ida, biblioStub, isbn);
+
+                    if (resultado == -2)
+                    {
+                        System.out.println("\n\nError, el id de administrador es incorrecto");
+                        System.out.println("\nPresiona una tecla para continuar...");
+                        teclado.nextLine();
+
+                    } else if (resultado == -1)
+                    {
+                        System.out.println("\n\nError, no se ha encontrado ningun libro con el isbn indicado");
+                        System.out.println("\nPresiona una tecla para continuar...");
+                        teclado.nextLine();
+
+                    } else if (resultado != -3)
+                    {
+                        libro = funcDescargar(ida, biblioStub, -1, resultado);
+                        Mostrar(resultado, true, libro);
+
+                        do
+                        {
+                            System.out.print("\n¿Es este el libro del que deseas retirar unidades (s/n)? ");
+                            siNo = teclado.next().charAt(0);
+                            siNo = Character.toLowerCase(siNo);
+                            teclado.nextLine(); //Limpia el buffer
+
+                            if (siNo != 's' && siNo != 'n')
+                            {
+                                System.out.println("Error, debes seleccionar s o n");
+                            }
+                        } while (siNo != 's' && siNo != 'n');
+
+                        if (siNo == 's')
+                        {
+                            System.out.print("Introduce el numero de libros a retirar: ");
+                            numLibros = teclado.nextInt();
+                            resultado = funcRetirar(ida, biblioStub, isbn, numLibros);
+                            teclado.nextLine(); //Limpia el buffer
+
+                            if (resultado == -1)
+                            {
+                                System.out.println("\n\nError, el id de administrador es incorrecto");
+                                System.out.println("\nPresiona una tecla para continuar...");
+                                teclado.nextLine();
+
+                            } else if (resultado == 0)
+                            {
+                                System.out.println("\n\nError, no se ha encontrado ningun libro con el isbn indicado");
+                                System.out.println("\nPresiona una tecla para continuar...");
+                                teclado.nextLine();
+
+                            } else if (resultado == 2)
+                            {
+                                System.out.println("\n\nError, hay menos libros de los que se ha solicitado retirar");
+                                System.out.println("\nPresiona una tecla para continuar...");
+                                teclado.nextLine();
+
+                            } else if (resultado == 1)
+                            {
+                                System.out.println("\n\n*** Se ha retirado el numero de libros indicados.**");
+                                System.out.println("\nPresiona una tecla para continuar...");
+                                teclado.nextLine();
+                            }
+                        }
+                    }
 
                     break;
 
                 case 6:
+                    System.out.println("\nCódigo de Ordenación");
+                    System.out.println("0.- Por ISBN");
+                    System.out.println("1.- Por Título");
+                    System.out.println("2.- Por Autor");
+                    System.out.println("3.- Por Año");
+                    System.out.println("4.- Por País");
+                    System.out.println("5.- Por Idioma");
+                    System.out.println("6.- Por nº de libros disponibles");
+                    System.out.println("7.- Por nº de libros prestados");
+                    System.out.println("8.- Por nº de libros en espera");
+
+                    System.out.println("Introduce código:");
+                    opcion = teclado.nextInt();
+                    res = funcOrdenar(ida, biblioStub, opcion);
+                    teclado.nextLine();
+
+                    if (res)
+                    {
+                        System.out.println("*** La biblioteca ha sido ordenada correctamente.**");
+                        System.out.println("\nPresiona una tecla para continuar...");
+                        teclado.nextLine();
+                    } else
+                    {
+                        System.out.println("\n\nError, no se ha podido ordenar la biblioteca");
+                        System.out.println("\nPresiona una tecla para continuar...");
+                        teclado.nextLine();
+                    }
 
                     break;
 
                 case 7:
-
+                    filtrarLibros(ida, biblioStub, true);
                     break;
 
                 case 8:
@@ -584,7 +967,9 @@ public class Cliente
         int opcionMenuPrincipal;
         String contraseña;
         Scanner teclado = new Scanner(System.in);
-        int resultado;
+        int resultado, num;
+        boolean res;
+        char siNo;
 
         do
         {
@@ -621,14 +1006,115 @@ public class Cliente
                     break;
 
                 case 2:
+                    filtrarLibros(-2, biblioStub, false);
 
                     break;
 
                 case 3:
+                    res = filtrarLibros(-2, biblioStub, false);
+
+                    if (res)
+                    {
+                        do
+                        {
+                            System.out.println("¿Quiere sacar un libro de la biblioteca (s/n)? ");
+                            siNo = teclado.next().charAt(0);
+                            siNo = Character.toLowerCase(siNo);
+                            // Limpiar el buffer
+                            teclado.nextLine();
+
+                            if (siNo != 's' && siNo != 'n')
+                            {
+                                System.out.println("Error, debes seleccionar s o n");
+                            }
+                        } while (siNo != 's' && siNo != 'n');
+
+                        if (siNo == 's')
+                        {
+
+                            System.out.println("Introduce la posicion del libro a solicitar su prestamo: ");
+                            num = teclado.nextInt();
+                            // Limpiar el buffer
+                            teclado.nextLine();
+                            resultado = funcPrestar(num - 1, biblioStub);
+
+                            if (resultado == -1)
+                            {
+                                System.out.println("Error, la posicion introducida no esta dentro de los limites del repositorio mezclado y ordenado\n");
+                                System.out.println("\nPresiona una tecla para continuar...\n");
+                                teclado.nextLine();
+
+                            } else if (resultado == 1)
+                            {
+                                System.out.println("*** El préstamo se ha concedido, recoge el libro en el mostrador.**\n");
+                                System.out.println("\nPresiona una tecla para continuar...\n");
+                                teclado.nextLine();
+
+                            } else if (resultado == 0)
+                            {
+                                System.out.println("** Se le ha puesto en lista de espera \n**");
+                                System.out.println("\nPresiona una tecla para continuar...\n");
+                                teclado.nextLine();
+                            }
+                        }
+                    }
 
                     break;
 
                 case 4:
+                    res = filtrarLibros(-2, biblioStub, false);
+
+                    if (res)
+                    {
+                        do
+                        {
+                            System.out.println("¿Quiere devolver un libro de la biblioteca (s/n)? ");
+                            siNo = teclado.next().charAt(0);
+                            siNo = Character.toLowerCase(siNo);
+                            // Limpiar el buffer
+                            teclado.nextLine();
+
+                            if (siNo != 's' && siNo != 'n')
+                            {
+                                System.out.println("Error, debes seleccionar s o n");
+                            }
+                        } while (siNo != 's' && siNo != 'n');
+
+                        if (siNo == 's')
+                        {
+
+                            System.out.println("Introduce la posicion del libro a devolver: ");
+                            num = teclado.nextInt();
+                            // Limpiar el buffer
+                            teclado.nextLine();
+                            resultado = funcDevolver(num - 1, biblioStub);
+
+                            if (resultado == -1)
+                            {
+                                System.out.println("Error, la posicion introducida no esta dentro de los limites del repositorio mezclado y ordenado\n");
+                                System.out.println("\nPresiona una tecla para continuar...\n");
+                                teclado.nextLine();
+
+                            } else if (resultado == 1)
+                            {
+                                System.out.println("*** Se ha devuelto el libro y se pondra en la estanteria**\n");
+                                System.out.println("\nPresiona una tecla para continuar...\n");
+                                teclado.nextLine();
+
+                            } else if (resultado == 0)
+                            {
+                                System.out.println("** Se ha devuelto el libro y se ha reducido el numero de usuarios en espera **\n");
+                                System.out.println("\nPresiona una tecla para continuar...\n");
+                                teclado.nextLine();
+
+                            } else if (resultado == 2)
+                            {
+                                System.out.println("Error, el libro no se puede devolver porque no hay usuarios en lista de espera ni libros prestados\n");
+                                System.out.println("\nPresiona una tecla para continuar...\n");
+                                teclado.nextLine();
+                            }
+                        }
+                    }
 
                     break;
 
@@ -642,7 +1128,6 @@ public class Cliente
 
     public static void main(String[] args)
     {
-        TLibro tLibro = new TLibro();
         Cliente c = new Cliente();
 
         try
