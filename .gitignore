@@ -1,3 +1,6 @@
 Practica_1/*.o
 Practica_1/GestorBiblioteca_client
 Practica_1/GestorBiblioteca_server
+/Practica_2/Servidor/dist/
+/Practica_2/Servidor/build/
+/Practica_2/Cliente/build/
