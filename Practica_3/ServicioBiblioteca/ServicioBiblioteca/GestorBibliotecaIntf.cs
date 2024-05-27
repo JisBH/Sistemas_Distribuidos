@@ -2,7 +2,7 @@
 
 namespace ServicioBiblioteca
 {
-    interface GestorBibliotecaIntf
+    public interface GestorBibliotecaIntf
     {
         int Conexion(String pPasswd);
         bool Desconexion(int pIda);

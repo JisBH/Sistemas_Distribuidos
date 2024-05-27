@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ServicioBiblioteca
 {
-    interface RepositorioLibroIntf
+    public interface RepositorioLibroIntf
     {
         void AniadirLibro(TLibro libro);
 

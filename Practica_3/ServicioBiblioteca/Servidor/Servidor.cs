@@ -10,17 +10,41 @@ using System.Runtime.Remoting.Channels.Tcp;
 
 namespace ServicioBiblioteca
 {
-    class Servidor
+    public class Servidor
     {
         static void Main(string[] args)
         {
-            ChannelServices.RegisterChannel(new TcpChannel(12345), false);
-            Console.WriteLine("Registrando el servicio de la Biblioteca Remota en modo Singlenton...");
-            RemotingConfiguration.RegisterWellKnownServiceType(typeof(GestorBiblioteca), "BibliotecaRemota",
-            WellKnownObjectMode.Singleton);
-            Console.WriteLine("Esperando llamadas Remotas...");
-            Console.WriteLine("Pulsa Enter para Salir..");
-            Console.ReadLine();
+            int puerto;
+            bool parsingResult = false;
+
+            do
+            {
+                Console.WriteLine("Introduce el nº de puerto para comunicarse: ");
+                parsingResult = Int32.TryParse(Console.ReadLine(), out puerto);
+
+                if (!parsingResult)
+                {
+                    Console.WriteLine("\nPor favor, indique un puerto válido.");
+                }
+            } while (!parsingResult);
+
+            try
+            {
+
+                ChannelServices.RegisterChannel(new TcpChannel(puerto), false);
+                Console.WriteLine("\nRegistrando el servicio del Gestor Bibliotecario en modo Singlenton...");
+                RemotingConfiguration.RegisterWellKnownServiceType(typeof(GestorBiblioteca), "GestorBiblioteca",
+                WellKnownObjectMode.Singleton);
+                Console.WriteLine("\nEsperando llamadas Remotas...");
+                Console.WriteLine("\nPulsa Enter para Salir..");
+                Console.ReadLine();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error: " + ex);
+                Console.WriteLine("\nPresiona una tecla para continuar");
+                Console.ReadLine();
+            }
         }
     }
 }

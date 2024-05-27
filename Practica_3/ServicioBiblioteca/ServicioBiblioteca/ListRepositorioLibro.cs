@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace ServicioBiblioteca
 {
     [Serializable]
-    class ListRepositorioLibro
+    public class ListRepositorioLibro : RepositorioLibroIntf
     {
         private List<TLibro> libros = new List<TLibro>();
 

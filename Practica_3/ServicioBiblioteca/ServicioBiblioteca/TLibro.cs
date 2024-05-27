@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace ServicioBiblioteca
 {
     [Serializable]
-    class TLibro
+    public class TLibro
     {
         public String titulo;
         public String autor;
