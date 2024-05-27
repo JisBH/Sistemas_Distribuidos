@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace ServicioBiblioteca
 {
     [Serializable]
-   public class TDatosRepositorio
+    public class TDatosRepositorio
     {
         private int numeroLibros;
         private String nombreRepositorio;

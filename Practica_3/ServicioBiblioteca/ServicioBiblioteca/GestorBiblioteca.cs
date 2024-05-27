@@ -105,7 +105,7 @@ namespace ServicioBiblioteca
                 result = random.Next(1, 1000001);
                 this.idAdmin = result;
             }
-            
+
             // Si aún no tengo ningún administrador y la contraseña es incorrecta, devuelvo -2
             else
             {
