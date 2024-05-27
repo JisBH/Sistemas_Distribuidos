@@ -4,3 +4,8 @@ Practica_1/GestorBiblioteca_server
 /Practica_2/Servidor/dist/
 /Practica_2/Servidor/build/
 /Practica_2/Cliente/build/
+/Practica_3/**/[Dd]ebug/
+/Practica_3/**/[Rr]elease/
+/Practica_3/**/x64/
+/Practica_3/**/[Bb]in/
+/Practica_3/**/[Oo]bj/
