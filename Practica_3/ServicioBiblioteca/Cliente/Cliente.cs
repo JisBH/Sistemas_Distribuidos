@@ -315,6 +315,22 @@ namespace ServicioBiblioteca
             return null;
         }
 
+        private int FuncNuevoLibro(int ida, GestorBiblioteca gestorBiblioteca, TLibro libro, int pRepos)
+        {
+
+            try
+            {
+                return gestorBiblioteca.NuevoLibro(ida, libro, pRepos - 1);
+
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Se ha producido un error en la funcion nuevo libro");
+            }
+
+            return -3;
+        }
+
         private void GestionAdministracion(int ida, GestorBiblioteca gestorBiblioteca)
         {
             int opcionMenuAdministracion;
@@ -394,203 +410,199 @@ namespace ServicioBiblioteca
                         }
 
                         break;
-                    /*
-                        case 3:
-                            Console.WriteLine("Introduce el Isbn: ");
-                            isbn = teclado.nextLine();
-                            Console.WriteLine("Introduce el Autor: ");
-                            autor = teclado.nextLine();
-                            Console.WriteLine("Introduce el Titulo: ");
-                            titulo = teclado.nextLine();
-                            Console.WriteLine("Introduce el Anio: ");
-                            anio = teclado.nextInt();
-                            teclado.nextLine(); // Limpia el buffer
-                            Console.WriteLine("Introduce el Pais: ");
-                            pais = teclado.nextLine();
-                            Console.WriteLine("Introduce el Idioma: ");
-                            idioma = teclado.nextLine();
-                            Console.WriteLine("Introduce el numero inicial de libros: ");
-                            numLibros = teclado.nextInt();
-                            teclado.nextLine(); // Limpia el buffer
-                            libro = new TLibro(titulo, autor, pais, idioma, isbn, anio, numLibros, 0, 0);
-                            obtenerListaRepositorios(ida, gestorBiblioteca, false);
-                            Console.WriteLine("Elige repositorio: ");
-                            opcion = teclado.nextInt();
 
-                            resultado = funcNuevoLibro(ida, gestorBiblioteca, libro, opcion);
-                            teclado.nextLine(); //Limpia el buffer
+                    case 3:
+                        Console.WriteLine("Introduce el Isbn: ");
+                        isbn = Console.ReadLine();
+                        Console.WriteLine("Introduce el Autor: ");
+                        autor = Console.ReadLine();
+                        Console.WriteLine("Introduce el Titulo: ");
+                        titulo = Console.ReadLine();
+                        Console.WriteLine("Introduce el Anio: ");
+                        anio = Convert.ToInt32(Console.ReadLine());
+                        Console.WriteLine("Introduce el Pais: ");
+                        pais = Console.ReadLine();
+                        Console.WriteLine("Introduce el Idioma: ");
+                        idioma = Console.ReadLine();
+                        Console.WriteLine("Introduce el numero inicial de libros: ");
+                        numLibros = Convert.ToInt32(Console.ReadLine());
 
-                            if (resultado == -1)
-                            {
-                                Console.WriteLine("\n\nError, el id de administrador es incorrecto");
-                                Console.WriteLine("\nPresiona una tecla para continuar...");
-                                teclado.nextLine();
-                            }
-                            else if (resultado == -2)
-                            {
-                                Console.WriteLine("\n\nError, la posicion introducida es incorrecta");
-                                Console.WriteLine("\nPresiona una tecla para continuar...");
-                                teclado.nextLine();
-                            }
-                            else if (resultado == 0)
-                            {
-                                Console.WriteLine("\n\nError, ya hay un libro con el mismo isbn en el repositorio indicado");
-                                Console.WriteLine("\nPresiona una tecla para continuar...");
-                                teclado.nextLine();
-                            }
-                            else if (resultado == 1)
-                            {
-                                Console.WriteLine("\n\n*** El libro ha sido añadido correctamente.**");
-                                Console.WriteLine("\nPresiona una tecla para continuar...");
-                                teclado.nextLine();
-                            }
-                            break;
+                        libro = new TLibro(titulo, autor, pais, idioma, isbn, anio, numLibros, 0, 0);
+                        ObtenerListaRepositorios(ida, gestorBiblioteca, false);
+                        Console.WriteLine("Elige repositorio: ");
+                        opcion = Convert.ToInt32(Console.ReadLine());
 
-                        case 4:
-                            Console.WriteLine("Introduce ISBN a buscar: ");
-                            isbn = teclado.nextLine();
-                            resultado = funcBuscar(ida, gestorBiblioteca, isbn);
+                        resultado = FuncNuevoLibro(ida, gestorBiblioteca, libro, opcion);
 
-                            if (resultado == -2)
-                            {
-                                Console.WriteLine("\n\nError, el id de administrador es incorrecto");
-                                Console.WriteLine("\nPresiona una tecla para continuar...");
-                                teclado.nextLine();
+                        if (resultado == -1)
+                        {
+                            Console.WriteLine("\n\nError, el id de administrador es incorrecto");
+                            Pausa();
+                        }
+                        else if (resultado == -2)
+                        {
+                            Console.WriteLine("\n\nError, la posicion introducida es incorrecta");
 
-                            }
-                            else if (resultado == -1)
-                            {
-                                Console.WriteLine("\n\nError, no se ha encontrado ningun libro con el isbn indicado");
-                                Console.WriteLine("\nPresiona una tecla para continuar...");
-                                teclado.nextLine();
+                            Pausa();
+                        }
+                        else if (resultado == 0)
+                        {
+                            Console.WriteLine("\n\nError, ya hay un libro con el mismo isbn en el repositorio indicado");
+                            Pausa();
 
-                            }
-                            else if (resultado != -3)
-                            {
-                                libro = funcDescargar(ida, gestorBiblioteca, -1, resultado);
-                                Mostrar(resultado, true, libro);
+                        }
+                        else if (resultado == 1)
+                        {
+                            Console.WriteLine("\n\n*** El libro ha sido añadido correctamente.**");
+                            Pausa();
+                        }
+                        break;
 
-                                do
-                                {
-                                    System.out.print("\n¿Es este el libro del que deseas comprar mas unidades (s/n)? ");
-                                    siNo = teclado.next().charAt(0);
-                                    siNo = Character.toLowerCase(siNo);
-                                    teclado.nextLine(); //Limpia el buffer
+                    /*   case 4:
+                           Console.WriteLine("Introduce ISBN a buscar: ");
+                           isbn = teclado.nextLine();
+                           resultado = funcBuscar(ida, gestorBiblioteca, isbn);
 
-                                    if (siNo != 's' && siNo != 'n')
-                                    {
-                                        Console.WriteLine("Error, debes seleccionar s o n");
-                                    }
-                                } while (siNo != 's' && siNo != 'n');
+                           if (resultado == -2)
+                           {
+                               Console.WriteLine("\n\nError, el id de administrador es incorrecto");
+                               Console.WriteLine("\nPresiona una tecla para continuar...");
+                               teclado.nextLine();
 
-                                if (siNo == 's')
-                                {
-                                    System.out.print("Introduce el numero de libros comprados: ");
-                                    numLibros = teclado.nextInt();
-                                    resultado = funcComprar(ida, gestorBiblioteca, isbn, numLibros);
-                                    teclado.nextLine(); //Limpia el buffer
+                           }
+                           else if (resultado == -1)
+                           {
+                               Console.WriteLine("\n\nError, no se ha encontrado ningun libro con el isbn indicado");
+                               Console.WriteLine("\nPresiona una tecla para continuar...");
+                               teclado.nextLine();
 
-                                    if (resultado == -1)
-                                    {
-                                        Console.WriteLine("\n\nError, el id de administrador es incorrecto");
-                                        Console.WriteLine("\nPresiona una tecla para continuar...");
-                                        teclado.nextLine();
+                           }
+                           else if (resultado != -3)
+                           {
+                               libro = funcDescargar(ida, gestorBiblioteca, -1, resultado);
+                               Mostrar(resultado, true, libro);
 
-                                    }
-                                    else if (resultado == 0)
-                                    {
-                                        Console.WriteLine("\n\nError, no se ha encontrado ningun libro con el isbn indicado");
-                                        Console.WriteLine("\nPresiona una tecla para continuar...");
-                                        teclado.nextLine();
+                               do
+                               {
+                                   System.out.print("\n¿Es este el libro del que deseas comprar mas unidades (s/n)? ");
+                                   siNo = teclado.next().charAt(0);
+                                   siNo = Character.toLowerCase(siNo);
+                                   teclado.nextLine(); //Limpia el buffer
 
-                                    }
-                                    else if (resultado == 1)
-                                    {
-                                        Console.WriteLine("\n\n*** Se han añadido los nuevos libros.**");
-                                        Console.WriteLine("\nPresiona una tecla para continuar...");
-                                        teclado.nextLine();
-                                    }
-                                }
-                            }
+                                   if (siNo != 's' && siNo != 'n')
+                                   {
+                                       Console.WriteLine("Error, debes seleccionar s o n");
+                                   }
+                               } while (siNo != 's' && siNo != 'n');
 
-                            break;
+                               if (siNo == 's')
+                               {
+                                   System.out.print("Introduce el numero de libros comprados: ");
+                                   numLibros = teclado.nextInt();
+                                   resultado = funcComprar(ida, gestorBiblioteca, isbn, numLibros);
+                                   teclado.nextLine(); //Limpia el buffer
 
-                        case 5:
-                            Console.WriteLine("Introduce ISBN a buscar: ");
-                            isbn = teclado.nextLine();
-                            resultado = funcBuscar(ida, gestorBiblioteca, isbn);
+                                   if (resultado == -1)
+                                   {
+                                       Console.WriteLine("\n\nError, el id de administrador es incorrecto");
+                                       Console.WriteLine("\nPresiona una tecla para continuar...");
+                                       teclado.nextLine();
 
-                            if (resultado == -2)
-                            {
-                                Console.WriteLine("\n\nError, el id de administrador es incorrecto");
-                                Console.WriteLine("\nPresiona una tecla para continuar...");
-                                teclado.nextLine();
+                                   }
+                                   else if (resultado == 0)
+                                   {
+                                       Console.WriteLine("\n\nError, no se ha encontrado ningun libro con el isbn indicado");
+                                       Console.WriteLine("\nPresiona una tecla para continuar...");
+                                       teclado.nextLine();
 
-                            }
-                            else if (resultado == -1)
-                            {
-                                Console.WriteLine("\n\nError, no se ha encontrado ningun libro con el isbn indicado");
-                                Console.WriteLine("\nPresiona una tecla para continuar...");
-                                teclado.nextLine();
+                                   }
+                                   else if (resultado == 1)
+                                   {
+                                       Console.WriteLine("\n\n*** Se han añadido los nuevos libros.**");
+                                       Console.WriteLine("\nPresiona una tecla para continuar...");
+                                       teclado.nextLine();
+                                   }
+                               }
+                           }
 
-                            }
-                            else if (resultado != -3)
-                            {
-                                libro = funcDescargar(ida, gestorBiblioteca, -1, resultado);
-                                Mostrar(resultado, true, libro);
+                           break;
 
-                                do
-                                {
-                                    System.out.print("\n¿Es este el libro del que deseas retirar unidades (s/n)? ");
-                                    siNo = teclado.next().charAt(0);
-                                    siNo = Character.toLowerCase(siNo);
-                                    teclado.nextLine(); //Limpia el buffer
+                       case 5:
+                           Console.WriteLine("Introduce ISBN a buscar: ");
+                           isbn = teclado.nextLine();
+                           resultado = funcBuscar(ida, gestorBiblioteca, isbn);
 
-                                    if (siNo != 's' && siNo != 'n')
-                                    {
-                                        Console.WriteLine("Error, debes seleccionar s o n");
-                                    }
-                                } while (siNo != 's' && siNo != 'n');
+                           if (resultado == -2)
+                           {
+                               Console.WriteLine("\n\nError, el id de administrador es incorrecto");
+                               Console.WriteLine("\nPresiona una tecla para continuar...");
+                               teclado.nextLine();
 
-                                if (siNo == 's')
-                                {
-                                    System.out.print("Introduce el numero de libros a retirar: ");
-                                    numLibros = teclado.nextInt();
-                                    resultado = funcRetirar(ida, gestorBiblioteca, isbn, numLibros);
-                                    teclado.nextLine(); //Limpia el buffer
+                           }
+                           else if (resultado == -1)
+                           {
+                               Console.WriteLine("\n\nError, no se ha encontrado ningun libro con el isbn indicado");
+                               Console.WriteLine("\nPresiona una tecla para continuar...");
+                               teclado.nextLine();
 
-                                    if (resultado == -1)
-                                    {
-                                        Console.WriteLine("\n\nError, el id de administrador es incorrecto");
-                                        Console.WriteLine("\nPresiona una tecla para continuar...");
-                                        teclado.nextLine();
+                           }
+                           else if (resultado != -3)
+                           {
+                               libro = funcDescargar(ida, gestorBiblioteca, -1, resultado);
+                               Mostrar(resultado, true, libro);
 
-                                    }
-                                    else if (resultado == 0)
-                                    {
-                                        Console.WriteLine("\n\nError, no se ha encontrado ningun libro con el isbn indicado");
-                                        Console.WriteLine("\nPresiona una tecla para continuar...");
-                                        teclado.nextLine();
+                               do
+                               {
+                                   System.out.print("\n¿Es este el libro del que deseas retirar unidades (s/n)? ");
+                                   siNo = teclado.next().charAt(0);
+                                   siNo = Character.toLowerCase(siNo);
+                                   teclado.nextLine(); //Limpia el buffer
 
-                                    }
-                                    else if (resultado == 2)
-                                    {
-                                        Console.WriteLine("\n\nError, hay menos libros de los que se ha solicitado retirar");
-                                        Console.WriteLine("\nPresiona una tecla para continuar...");
-                                        teclado.nextLine();
+                                   if (siNo != 's' && siNo != 'n')
+                                   {
+                                       Console.WriteLine("Error, debes seleccionar s o n");
+                                   }
+                               } while (siNo != 's' && siNo != 'n');
 
-                                    }
-                                    else if (resultado == 1)
-                                    {
-                                        Console.WriteLine("\n\n*** Se ha retirado el numero de libros indicados.**");
-                                        Console.WriteLine("\nPresiona una tecla para continuar...");
-                                        teclado.nextLine();
-                                    }
-                                }
-                            }
+                               if (siNo == 's')
+                               {
+                                   System.out.print("Introduce el numero de libros a retirar: ");
+                                   numLibros = teclado.nextInt();
+                                   resultado = funcRetirar(ida, gestorBiblioteca, isbn, numLibros);
+                                   teclado.nextLine(); //Limpia el buffer
 
-                            break;
-                    */
+                                   if (resultado == -1)
+                                   {
+                                       Console.WriteLine("\n\nError, el id de administrador es incorrecto");
+                                       Console.WriteLine("\nPresiona una tecla para continuar...");
+                                       teclado.nextLine();
+
+                                   }
+                                   else if (resultado == 0)
+                                   {
+                                       Console.WriteLine("\n\nError, no se ha encontrado ningun libro con el isbn indicado");
+                                       Console.WriteLine("\nPresiona una tecla para continuar...");
+                                       teclado.nextLine();
+
+                                   }
+                                   else if (resultado == 2)
+                                   {
+                                       Console.WriteLine("\n\nError, hay menos libros de los que se ha solicitado retirar");
+                                       Console.WriteLine("\nPresiona una tecla para continuar...");
+                                       teclado.nextLine();
+
+                                   }
+                                   else if (resultado == 1)
+                                   {
+                                       Console.WriteLine("\n\n*** Se ha retirado el numero de libros indicados.**");
+                                       Console.WriteLine("\nPresiona una tecla para continuar...");
+                                       teclado.nextLine();
+                                   }
+                               }
+                           }
+
+                           break;
+                   */
                     case 6:
                         Console.WriteLine("\nCódigo de Ordenación");
                         Console.WriteLine("0.- Por ISBN");

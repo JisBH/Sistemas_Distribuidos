@@ -319,7 +319,36 @@ namespace ServicioBiblioteca
 
         public int NuevoLibro(int pIda, TLibro L, int pRepo)
         {
-            throw new NotImplementedException();
+            if (pIda != this.idAdmin || this.numAdministradores > 1)
+            {
+                return -1;
+            }
+
+            if (pRepo < 0 || pRepo >= this.repositoriosCargados.Count)
+            {
+                return -2;
+            }
+
+            TDatosRepositorio datosRepositorio;
+
+            for (int i = 0; i < this.repositoriosCargados.Count; i++)
+            {
+                datosRepositorio = this.repositoriosCargados.ElementAt(i);
+                if (datosRepositorio.RepositorioLibro.GetLibroPorIsbn(L.Isbn) != null)
+                {
+                    return 0;
+                }
+            }
+
+            datosRepositorio = this.repositoriosCargados.ElementAt(pRepo);
+
+            datosRepositorio.RepositorioLibro.AniadirLibro(L);
+            datosRepositorio.NumeroLibros++;
+            this.librosTodosRepositorios.Add(L);
+            IComparer<TLibro> comp = new ComparadorLibro(this.campoOrdenacion);
+            datosRepositorio.RepositorioLibro.GetTodosLibros().Sort(comp);
+
+            return 1;
         }
 
         public bool Ordenar(int pIda, int pCampo)
