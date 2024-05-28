@@ -12,18 +12,20 @@ namespace ServicioBiblioteca
         private int numeroLibros;
         private String nombreRepositorio;
         private String direccionRepositorio;
+        private String rutaRepositorio;
         private RepositorioLibroIntf repositorioLibro;
 
         public TDatosRepositorio()
         {
         }
 
-        public TDatosRepositorio(int numeroLibros, String nombreRepositorio, String direccionRepositorio, RepositorioLibroIntf repositorioLibro)
+        public TDatosRepositorio(int numeroLibros, String nombreRepositorio, String direccionRepositorio, RepositorioLibroIntf repositorioLibro, String rutaRepositorio)
         {
             this.numeroLibros = numeroLibros;
             this.nombreRepositorio = nombreRepositorio;
             this.direccionRepositorio = direccionRepositorio;
             this.repositorioLibro = repositorioLibro;
+            this.rutaRepositorio = rutaRepositorio;
         }
         public string NombreRepositorio
         {
@@ -47,6 +49,12 @@ namespace ServicioBiblioteca
         {
             get { return this.repositorioLibro; }
             set { this.repositorioLibro = value; }
+        }
+
+        public String RutaRepositorio
+        {
+            get { return this.rutaRepositorio; }
+            set { this.rutaRepositorio = value; }
         }
 
 

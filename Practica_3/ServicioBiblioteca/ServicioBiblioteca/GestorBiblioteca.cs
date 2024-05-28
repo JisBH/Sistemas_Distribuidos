@@ -26,47 +26,48 @@ namespace ServicioBiblioteca
                 return -1;
 
             }
-            FileStream fs = null;
-            BinaryReader binaryReader = null;
 
             try
             {
 
-                fs = File.OpenRead(pNomFichero);
-                binaryReader = new BinaryReader(fs);
-
-                int numeroLibros = binaryReader.ReadInt32();
-                String nombreRepositorio = binaryReader.ReadString();
-                String direccionRepositorio = binaryReader.ReadString();
-
-                RepositorioLibroIntf repositorioLibro = new ListRepositorioLibro();
-                TDatosRepositorio datosRepositorio = new TDatosRepositorio(numeroLibros, nombreRepositorio, direccionRepositorio, repositorioLibro);
-
-                if (this.repositoriosCargados.Contains(datosRepositorio))
+                using (FileStream fs = File.OpenRead(pNomFichero))
+                using (BinaryReader binaryReader = new BinaryReader(fs))
                 {
-                    return -2;
+
+                    int numeroLibros = binaryReader.ReadInt32();
+                    String nombreRepositorio = binaryReader.ReadString();
+                    String direccionRepositorio = binaryReader.ReadString();
+
+                    RepositorioLibroIntf repositorioLibro = new ListRepositorioLibro();
+                    TDatosRepositorio datosRepositorio = new TDatosRepositorio(numeroLibros, nombreRepositorio, direccionRepositorio, repositorioLibro, pNomFichero);
+
+                    if (this.repositoriosCargados.Contains(datosRepositorio))
+                    {
+                        return -2;
+                    }
+
+
+                    for (int i = 0; i < numeroLibros; i++)
+                    {
+                        String isbn = binaryReader.ReadString();
+                        String titulo = binaryReader.ReadString();
+                        String autor = binaryReader.ReadString();
+                        int anio = binaryReader.ReadInt32();
+                        String pais = binaryReader.ReadString();
+                        String idioma = binaryReader.ReadString();
+                        int disponible = binaryReader.ReadInt32();
+                        int prestado = binaryReader.ReadInt32();
+                        int reservado = binaryReader.ReadInt32();
+
+                        TLibro libro = new TLibro(titulo, autor, pais, idioma, isbn, anio, disponible, prestado, reservado);
+                        datosRepositorio.RepositorioLibro.AniadirLibro(libro);
+                        this.librosTodosRepositorios.Add(libro);
+                    }
+
+
+                    this.repositoriosCargados.Add(datosRepositorio);
+                    Ordenar(pIda, this.campoOrdenacion);
                 }
-
-
-                for (int i = 0; i < numeroLibros; i++)
-                {
-                    String isbn = binaryReader.ReadString();
-                    String titulo = binaryReader.ReadString();
-                    String autor = binaryReader.ReadString();
-                    int anio = binaryReader.ReadInt32();
-                    String pais = binaryReader.ReadString();
-                    String idioma = binaryReader.ReadString();
-                    int disponible = binaryReader.ReadInt32();
-                    int prestado = binaryReader.ReadInt32();
-                    int reservado = binaryReader.ReadInt32();
-
-                    TLibro libro = new TLibro(titulo, autor, pais, idioma, isbn, anio, disponible, prestado, reservado);
-                    datosRepositorio.RepositorioLibro.AniadirLibro(libro);
-                    this.librosTodosRepositorios.Add(libro);
-                }
-
-                this.repositoriosCargados.Add(datosRepositorio);
-                Ordenar(pIda, this.campoOrdenacion);
 
             }
             catch (Exception ex)
@@ -74,6 +75,7 @@ namespace ServicioBiblioteca
                 Console.WriteLine("Error: " + ex);
                 return 0;
             }
+
 
             return 1;
         }
@@ -118,7 +120,16 @@ namespace ServicioBiblioteca
 
         public TDatosRepositorio DatosRepositorio(int pIda, int pRepo)
         {
-            throw new NotImplementedException();
+            if (pIda != this.idAdmin || this.numAdministradores > 1)
+            {
+                return null;
+            }
+            if (pRepo < 0 || pRepo >= this.repositoriosCargados.Count)
+            {
+                return null;
+            }
+
+            return this.repositoriosCargados.ElementAt(pRepo);
         }
 
         public TLibro Descargar(int pIda, int pRepo, int pPos)
@@ -192,7 +203,94 @@ namespace ServicioBiblioteca
 
         public int GuardarRepositorio(int pIda, int pRepo)
         {
-            throw new NotImplementedException();
+            if (this.repositoriosCargados.Count == 0)
+            {
+                return -2;
+            }
+
+            if (pIda != this.idAdmin || this.numAdministradores > 1)
+            {
+                return -1;
+            }
+
+            if (pRepo < -1 || pRepo >= this.repositoriosCargados.Count)
+            {
+                return -2;
+            }
+
+            try
+            {
+                if (pRepo != -1)
+                {
+                    TDatosRepositorio datosRepositorio = this.repositoriosCargados.ElementAt(pRepo);
+                    using (FileStream fs = File.OpenWrite(datosRepositorio.RutaRepositorio))
+                    using (BinaryWriter binaryWriter = new BinaryWriter(fs))
+                    {
+
+
+
+
+                        binaryWriter.Write(datosRepositorio.NumeroLibros);
+                        binaryWriter.Write(datosRepositorio.NombreRepositorio);
+                        binaryWriter.Write(datosRepositorio.DireccionRepositorio);
+
+                        for (int i = 0; i < datosRepositorio.NumeroLibros; i++)
+                        {
+                            TLibro libro = datosRepositorio.RepositorioLibro.GetLibro(i);
+
+                            binaryWriter.Write(libro.isbn);
+                            binaryWriter.Write(libro.titulo);
+                            binaryWriter.Write(libro.autor);
+                            binaryWriter.Write(libro.anio);
+                            binaryWriter.Write(libro.pais);
+                            binaryWriter.Write(libro.idioma);
+                            binaryWriter.Write(libro.disponibles);
+                            binaryWriter.Write(libro.prestados);
+                            binaryWriter.Write(libro.reservados);
+                        }
+                    }
+                }
+
+                else
+                {
+                    for (int i = 0; i < this.repositoriosCargados.Count; i++)
+                    {
+                        TDatosRepositorio datosRepositorio = this.repositoriosCargados.ElementAt(i);
+                        using (FileStream fs = File.OpenWrite(datosRepositorio.RutaRepositorio))
+                        using (BinaryWriter binaryWriter = new BinaryWriter(fs))
+                        {
+
+                            binaryWriter.Write(datosRepositorio.NumeroLibros);
+                            binaryWriter.Write(datosRepositorio.NombreRepositorio);
+                            binaryWriter.Write(datosRepositorio.DireccionRepositorio);
+
+                            for (int j = 0; j < datosRepositorio.NumeroLibros; j++)
+                            {
+                                TLibro libro = datosRepositorio.RepositorioLibro.GetLibro(j);
+
+                                binaryWriter.Write(libro.isbn);
+                                binaryWriter.Write(libro.titulo);
+                                binaryWriter.Write(libro.autor);
+                                binaryWriter.Write(libro.anio);
+                                binaryWriter.Write(libro.pais);
+                                binaryWriter.Write(libro.idioma);
+                                binaryWriter.Write(libro.disponibles);
+                                binaryWriter.Write(libro.prestados);
+                                binaryWriter.Write(libro.reservados);
+                            }
+                        }
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error: " + ex);
+                return 0;
+
+            }
+
+            return 1;
         }
 
         public int NLibros(int pRepo)
@@ -211,7 +309,12 @@ namespace ServicioBiblioteca
 
         public int NRepositorios(int pIda)
         {
-            throw new NotImplementedException();
+            if (pIda != this.idAdmin || this.numAdministradores > 1)
+            {
+                return -1;
+            }
+
+            return this.repositoriosCargados.Count;
         }
 
         public int NuevoLibro(int pIda, TLibro L, int pRepo)

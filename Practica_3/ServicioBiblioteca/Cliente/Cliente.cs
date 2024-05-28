@@ -59,6 +59,55 @@ namespace ServicioBiblioteca
             Console.WriteLine("\n");
         }
 
+        private void MuestraListaRepositorios(List<TDatosRepositorio> repositorios, bool flag)
+        {
+            Console.WriteLine(String.Format("{0,-5}{1,-38}{2,-28}{3,-10}", "POS", "NOMBRE", "DIRECCION", "Nº LIBROS"));
+
+            for (int i = 0; i < 93; i++)
+            {
+                Console.Write("*");
+            }
+
+            Console.WriteLine("");
+
+            for (int i = 0; i < repositorios.Count; i++)
+            {
+                TDatosRepositorio repositorio = repositorios.ElementAt(i);
+
+                String nombre = Ajustar(String.Format("{0,-38}", repositorio.NombreRepositorio), 38);
+
+                Console.WriteLine(String.Format("{0,-5}{1,-18}{2,-28}{3,-10}",
+                    (i + 1), nombre, repositorio.DireccionRepositorio, repositorio.NumeroLibros));
+            }
+
+            if (flag == true)
+            {
+                Console.WriteLine(String.Format("{0,-5}{1,-18}", 0, "Todos los repositorios"));
+            }
+        }
+
+        private void ObtenerListaRepositorios(int ida, GestorBiblioteca gestorBiblioteca, bool flag)
+        {
+
+            List<TDatosRepositorio> repositoriosCargados = new List<TDatosRepositorio>();
+
+            int numRepositorios = FuncNRepositorios(ida, gestorBiblioteca);
+
+            for (int i = 0; i < numRepositorios; i++)
+            {
+                TDatosRepositorio datosRepositorio = FuncDatosRepositorio(ida, gestorBiblioteca, i);
+
+                if (datosRepositorio != null)
+                {
+                    repositoriosCargados.Add(datosRepositorio);
+
+                }
+            }
+
+            MuestraListaRepositorios(repositoriosCargados, flag);
+
+        }
+
         private void Pausa()
         {
             Console.WriteLine("\nPresiona una tecla para continuar...");
@@ -204,7 +253,7 @@ namespace ServicioBiblioteca
             return null;
         }
 
-        private bool FuncOrdenar(int pIda, GestorBibliotecaIntf gestorBilioteca, int pCampo)
+        private bool FuncOrdenar(int pIda, GestorBiblioteca gestorBilioteca, int pCampo)
         {
 
             try
@@ -217,6 +266,53 @@ namespace ServicioBiblioteca
                 Console.WriteLine("Se ha producido un error en la funcion ordenar");
             }
             return false;
+        }
+
+        private int FuncGuardarRepositorio(int ida, GestorBiblioteca gestorBilioteca, int pRepos)
+        {
+
+            try
+            {
+                return gestorBilioteca.GuardarRepositorio(ida, pRepos - 1);
+
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Se ha producido un error en la funcion guardar repositorio");
+            }
+
+            return -3;
+        }
+
+        private int FuncNRepositorios(int ida, GestorBiblioteca gestorBilioteca)
+        {
+            try
+            {
+                return gestorBilioteca.NRepositorios(ida);
+
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Se ha producido un error en la funcion nRepositorios");
+            }
+
+            return -3;
+        }
+
+        private TDatosRepositorio FuncDatosRepositorio(int ida, GestorBiblioteca gestorBilioteca, int pRepos)
+        {
+
+            try
+            {
+                return gestorBilioteca.DatosRepositorio(ida, pRepos);
+
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Se ha producido un error en la funcion DatosRepositorio");
+            }
+
+            return null;
         }
 
         private void GestionAdministracion(int ida, GestorBiblioteca gestorBiblioteca)
@@ -270,40 +366,35 @@ namespace ServicioBiblioteca
                         }
                         break;
 
-                    /*    case 2:
-                            obtenerListaRepositorios(ida, gestorBiblioteca, true);
-                            Console.WriteLine("Elige repositorio: ");
-                            opcion = teclado.nextInt();
-                            resultado = funcGuardarRepositorio(ida, gestorBiblioteca, opcion);
-                            teclado.nextLine(); //Limpia el buffer
+                    case 2:
+                        ObtenerListaRepositorios(ida, gestorBiblioteca, true);
+                        Console.WriteLine("Elige repositorio: ");
+                        opcion = Convert.ToInt32(Console.ReadLine());
+                        resultado = FuncGuardarRepositorio(ida, gestorBiblioteca, opcion);
 
-                            if (resultado == -1)
-                            {
-                                Console.WriteLine("\n\nError, el id de administrador es incorrecto");
-                                Console.WriteLine("\nPresiona una tecla para continuar...");
-                                teclado.nextLine();
-                            }
-                            else if (resultado == -2)
-                            {
-                                Console.WriteLine("\n\nError, la posicion introducida es incorrecta");
-                                Console.WriteLine("\nPresiona una tecla para continuar...");
-                                teclado.nextLine();
-                            }
-                            else if (resultado == 0)
-                            {
-                                Console.WriteLine("\n\nError, no se ha podido guardar el repositorio");
-                                Console.WriteLine("\nPresiona una tecla para continuar...");
-                                teclado.nextLine();
-                            }
-                            else if (resultado == 1)
-                            {
-                                Console.WriteLine("\n\n*** Se ha guardado el/los repositorios seleccionados de la biblioteca.**");
-                                Console.WriteLine("\nPresiona una tecla para continuar...");
-                                teclado.nextLine();
-                            }
+                        if (resultado == -1)
+                        {
+                            Console.WriteLine("\n\nError, el id de administrador es incorrecto");
+                            Pausa();
+                        }
+                        else if (resultado == -2)
+                        {
+                            Console.WriteLine("\n\nError, la posicion introducida es incorrecta");
+                            Pausa();
+                        }
+                        else if (resultado == 0)
+                        {
+                            Console.WriteLine("\n\nError, no se ha podido guardar el repositorio");
+                            Pausa();
+                        }
+                        else if (resultado == 1)
+                        {
+                            Console.WriteLine("\n\n*** Se ha guardado el/los repositorios seleccionados de la biblioteca.**");
+                            Pausa();
+                        }
 
-                            break;
-
+                        break;
+                    /*
                         case 3:
                             Console.WriteLine("Introduce el Isbn: ");
                             isbn = teclado.nextLine();
