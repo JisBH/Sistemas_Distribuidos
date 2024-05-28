@@ -18,17 +18,19 @@ public class TDatosRepositorio implements Serializable
     private String nombreRepositorio;
     private String direccionRepositorio;
     private RepositorioLibro repositorioLibro;
+    private String rutaRepositorio;
 
     public TDatosRepositorio()
     {
     }
 
-    public TDatosRepositorio(int numeroLibros, String nombreRepositorio, String direccionRepositorio, RepositorioLibro repositorioLibro)
+    public TDatosRepositorio(int numeroLibros, String nombreRepositorio, String direccionRepositorio, RepositorioLibro repositorioLibro, String rutaRepositorio)
     {
         this.numeroLibros = numeroLibros;
         this.nombreRepositorio = nombreRepositorio;
         this.direccionRepositorio = direccionRepositorio;
         this.repositorioLibro = repositorioLibro;
+        this.rutaRepositorio = rutaRepositorio;
     }
 
     public int getNumeroLibros()
@@ -69,6 +71,16 @@ public class TDatosRepositorio implements Serializable
     public void setRepositorioLibro(RepositorioLibro repositorioLibro)
     {
         this.repositorioLibro = repositorioLibro;
+    }
+
+    public String getRutaRepositorio()
+    {
+        return rutaRepositorio;
+    }
+
+    public void setRutaRepositorio(String rutaRepositorio)
+    {
+        this.rutaRepositorio = rutaRepositorio;
     }
 
     @Override

@@ -550,7 +550,7 @@ public class Cliente
                 {
                     libro = funcDescargar(ida, biblioStub, reposOpcion - 1, i);
 
-                    if (texto.equalsIgnoreCase(libro.getPais()))
+                    if (texto.equalsIgnoreCase(libro.getIdioma()))
                     {
                         Mostrar(i, mostrar, libro);
                         contador++;

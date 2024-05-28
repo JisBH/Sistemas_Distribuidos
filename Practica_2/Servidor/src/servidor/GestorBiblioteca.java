@@ -127,7 +127,7 @@ public class GestorBiblioteca implements GestorBibliotecaIntf
                 String direccionRepositorio = inputStream.readUTF();
 
                 RepositorioLibro repositorioLibro = new ArrayListRepositorioLibro();
-                TDatosRepositorio datosRepositorio = new TDatosRepositorio(numeroLibros, nombreRepositorio, direccionRepositorio, repositorioLibro);
+                TDatosRepositorio datosRepositorio = new TDatosRepositorio(numeroLibros, nombreRepositorio, direccionRepositorio, repositorioLibro,pNomFichero);
 
                 if (this.repositoriosCargados.contains(datosRepositorio))
                 {
@@ -179,8 +179,6 @@ public class GestorBiblioteca implements GestorBibliotecaIntf
             return -2;
         }
 
-        int posEscritura = pRepo + 1;
-
         if (pIda != this.idAdmin || this.numAdministradores > 1)
         {
             return -1;
@@ -197,7 +195,7 @@ public class GestorBiblioteca implements GestorBibliotecaIntf
             {
 
                 TDatosRepositorio datosRepositorio = this.repositoriosCargados.get(pRepo);
-                DataOutputStream outputStream = new DataOutputStream(new FileOutputStream(Paths.get("Biblioteca.jdat_R" + posEscritura + "_").toAbsolutePath().toString()));
+                DataOutputStream outputStream = new DataOutputStream(new FileOutputStream(Paths.get(datosRepositorio.getRutaRepositorio()).toAbsolutePath().toString()));
 
                 outputStream.writeInt(datosRepositorio.getNumeroLibros());
                 outputStream.writeUTF(datosRepositorio.getNombreRepositorio());
@@ -223,9 +221,8 @@ public class GestorBiblioteca implements GestorBibliotecaIntf
 
             for (int i = 0; i < this.repositoriosCargados.size(); i++)
             {
-                posEscritura = i + 1;
                 TDatosRepositorio datosRepositorio = this.repositoriosCargados.get(i);
-                DataOutputStream outputStream = new DataOutputStream(new FileOutputStream(Paths.get("Biblioteca.jdat_R" + posEscritura + "_").toAbsolutePath().toString()));
+                DataOutputStream outputStream = new DataOutputStream(new FileOutputStream(Paths.get(datosRepositorio.getRutaRepositorio()).toAbsolutePath().toString()));
 
                 outputStream.writeInt(datosRepositorio.getNumeroLibros());
                 outputStream.writeUTF(datosRepositorio.getNombreRepositorio());
@@ -233,7 +230,7 @@ public class GestorBiblioteca implements GestorBibliotecaIntf
 
                 for (int j = 0; j < datosRepositorio.getNumeroLibros(); j++)
                 {
-                    TLibro libro = datosRepositorio.getRepositorioLibro().getLibro(i);
+                    TLibro libro = datosRepositorio.getRepositorioLibro().getLibro(j);
 
                     outputStream.writeUTF(libro.isbn);
                     outputStream.writeUTF(libro.titulo);

@@ -5,8 +5,9 @@
         <group>
             <file>file:/C:/Users/Usuario/Documents/Ingeniería%20Informática/4º%20Curso/Segundo%20cuatrimestre/Sistemas_Distribuidos/Practica_2/Servicio/src/servicio/comun/TLibro.java</file>
             <file>file:/C:/Users/Usuario/Documents/Ingeniería%20Informática/4º%20Curso/Segundo%20cuatrimestre/Sistemas_Distribuidos/Practica_2/Servicio/src/servicio/comun/TDatosRepositorio.java</file>
-            <file>file:/C:/Users/Usuario/Documents/Ingeniería%20Informática/4º%20Curso/Segundo%20cuatrimestre/Sistemas_Distribuidos/Practica_2/Servicio/src/servicio/comun/GestorBibliotecaIntf.java</file>
             <file>file:/C:/Users/Usuario/Documents/Ingeniería%20Informática/4º%20Curso/Segundo%20cuatrimestre/Sistemas_Distribuidos/Practica_2/Servicio/src/servicio/comun/ArrayListRepositorioLibro.java</file>
+            <file>file:/C:/Users/Usuario/Documents/Ingeniería%20Informática/4º%20Curso/Segundo%20cuatrimestre/Sistemas_Distribuidos/Practica_2/Servicio/src/servicio/comun/GestorBibliotecaIntf.java</file>
+            <file>file:/C:/Users/Usuario/Documents/Ingeniería%20Informática/4º%20Curso/Segundo%20cuatrimestre/Sistemas_Distribuidos/Practica_2/Servicio/src/servicio/comun/ComparadorLibro.java</file>
             <file>file:/C:/Users/Usuario/Documents/Ingeniería%20Informática/4º%20Curso/Segundo%20cuatrimestre/Sistemas_Distribuidos/Practica_2/Servicio/src/servicio/comun/RepositorioLibro.java</file>
         </group>
     </open-files>
