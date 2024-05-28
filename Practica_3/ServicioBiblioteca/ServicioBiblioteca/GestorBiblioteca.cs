@@ -450,7 +450,54 @@ namespace ServicioBiblioteca
 
         public int Retirar(int pIda, string pIsbn, int pNoLibros)
         {
-            throw new NotImplementedException();
+            if (pIda != this.idAdmin)
+            {
+                return -1;
+            }
+
+            int posLibro = Buscar(pIda, pIsbn);
+
+            if (posLibro == -1)
+            {
+                return 0;
+            }
+
+            TLibro libro = this.librosTodosRepositorios.ElementAt(posLibro);
+
+            if (libro.Disponibles >= pNoLibros)
+            {
+                libro.Disponibles -= pNoLibros;
+
+            }
+            else
+            {
+                return 2;
+            }
+
+            //Codigo para ordenar el repositorio que contiene el libro
+            int i = 0;
+            bool encontrado = false;
+
+            while (i < this.repositoriosCargados.Count && !encontrado)
+            {
+                TDatosRepositorio datosRepositorio = this.repositoriosCargados.ElementAt(i);
+
+                if (datosRepositorio.RepositorioLibro.GetLibroPorIsbn(pIsbn) != null)
+                {
+                    encontrado = true;
+
+                }
+                else
+                {
+                    i++;
+                }
+            }
+            // i tiene el repositorio en el que esta el libro
+            // Ordenamos el repositorio
+            IComparer<TLibro> comp = new ComparadorLibro(this.campoOrdenacion);
+            this.repositoriosCargados.ElementAt(i).RepositorioLibro.GetTodosLibros().Sort(comp);
+
+            return 1;
         }
     }
 }
