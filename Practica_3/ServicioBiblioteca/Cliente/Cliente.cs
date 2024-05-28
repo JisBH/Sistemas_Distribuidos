@@ -379,6 +379,239 @@ namespace ServicioBiblioteca
             return -3;
         }
 
+        private bool FiltrarLibros(int ida, GestorBiblioteca gestorBiblioteca, bool admin)
+        {
+            int nlibros, contador = 0, reposOpcion, numRepos;
+            TLibro libro;
+            bool mostrar = true, cargado = true, opcion_correcta = true, encontrado = false;
+            String texto;
+            char opcion;
+
+            Console.WriteLine("Introduce el texto a buscar: ");
+            texto = Console.ReadLine();
+            Console.WriteLine("\nCódigo de Búsqueda\n");
+            Console.WriteLine("I.- Por Isbn\n");
+            Console.WriteLine("T.- Por Titulo\n");
+            Console.WriteLine("A.- Por Autor\n");
+            Console.WriteLine("P.- Por Pais\n");
+            Console.WriteLine("D.- Por Idioma\n");
+            Console.WriteLine("*.- Por todos los campos\n");
+            Console.Write("\nIntroduce el Código: ");
+            opcion = Convert.ToChar(Console.ReadLine());
+            Console.WriteLine("\n");
+
+            if (admin)
+            {
+                numRepos = FuncNRepositorios(ida, gestorBiblioteca);
+
+                if (numRepos == 0)
+                {
+                    Console.WriteLine("Error, no hay ningun repositorio cargado");
+                    Console.WriteLine("Presiona una tecla para continuar");
+                    Console.ReadLine();
+                    return false;
+                }
+
+                ObtenerListaRepositorios(ida, gestorBiblioteca, true);
+
+                do
+                {
+                    Console.Write("Elige repositorio: ");
+                    reposOpcion = Convert.ToInt32(Console.ReadLine());
+                    Console.WriteLine("");
+
+                    if (reposOpcion < 0 || reposOpcion > numRepos)
+                    {
+                        Console.WriteLine("\nError, debes elegir un repositorio valido");
+
+                    }
+
+                } while (reposOpcion < 0 || reposOpcion > numRepos);
+
+            }
+            else
+            {
+                reposOpcion = 0;
+                nlibros = FuncNLibros(-1, gestorBiblioteca);
+
+                if (nlibros == 0)
+                {
+                    Console.WriteLine("Error, no hay ningun repositorio cargado");
+                    Console.WriteLine("Presiona una tecla para continuar");
+                    Console.ReadLine();
+                    return false;
+                }
+            }
+
+            switch (opcion)
+            {
+
+                case 'i':
+                case 'I':
+                    nlibros = FuncNLibros(reposOpcion - 1, gestorBiblioteca);
+
+                    for (int i = 0; i < nlibros; i++)
+                    {
+                        libro = FuncDescargar(ida, gestorBiblioteca, reposOpcion - 1, i);
+
+                        if (libro.Isbn.IndexOf(texto, StringComparison.OrdinalIgnoreCase) >= 0)
+                        {
+                            Mostrar(i, mostrar, libro);
+                            contador++;
+                            mostrar = false;
+                        }
+                    }
+
+                    break;
+
+                case 't':
+                case 'T':
+
+                    nlibros = FuncNLibros(reposOpcion - 1, gestorBiblioteca);
+
+                    for (int i = 0; i < nlibros; i++)
+                    {
+                        libro = FuncDescargar(ida, gestorBiblioteca, reposOpcion - 1, i);
+
+                        if (libro.Titulo.IndexOf(texto, StringComparison.OrdinalIgnoreCase) >= 0)
+                        {
+                            Mostrar(i, mostrar, libro);
+                            contador++;
+                            mostrar = false;
+                        }
+                    }
+
+                    break;
+
+                case 'a':
+                case 'A':
+
+                    nlibros = FuncNLibros(reposOpcion - 1, gestorBiblioteca);
+
+                    for (int i = 0; i < nlibros; i++)
+                    {
+                        libro = FuncDescargar(ida, gestorBiblioteca, reposOpcion - 1, i);
+
+                        if (libro.Autor.IndexOf(texto, StringComparison.OrdinalIgnoreCase) >= 0)
+                        {
+                            Mostrar(i, mostrar, libro);
+                            contador++;
+                            mostrar = false;
+                        }
+                    }
+
+                    break;
+
+                case 'p':
+                case 'P':
+
+                    nlibros = FuncNLibros(reposOpcion - 1, gestorBiblioteca);
+
+                    for (int i = 0; i < nlibros; i++)
+                    {
+                        libro = FuncDescargar(ida, gestorBiblioteca, reposOpcion - 1, i);
+
+                        if (libro.Pais.IndexOf(texto, StringComparison.OrdinalIgnoreCase) >= 0)
+                        {
+                            Mostrar(i, mostrar, libro);
+
+                            contador++;
+                            mostrar = false;
+                        }
+
+                    }
+
+                    break;
+
+                case 'd':
+                case 'D':
+
+                    nlibros = FuncNLibros(reposOpcion - 1, gestorBiblioteca);
+
+                    for (int i = 0; i < nlibros; i++)
+                    {
+                        libro = FuncDescargar(ida, gestorBiblioteca, reposOpcion - 1, i);
+
+                        if (libro.Idioma.IndexOf(texto, StringComparison.OrdinalIgnoreCase) >= 0)
+                        {
+                            Mostrar(i, mostrar, libro);
+                            contador++;
+                            mostrar = false;
+                        }
+                    }
+
+                    break;
+
+                case '*':
+
+                    nlibros = FuncNLibros(reposOpcion - 1, gestorBiblioteca);
+
+                    for (int i = 0; i < nlibros; i++)
+                    {
+                        libro = FuncDescargar(ida, gestorBiblioteca, reposOpcion - 1, i);
+
+                        if (libro.Isbn.IndexOf(texto, StringComparison.OrdinalIgnoreCase) >= 0)
+                        {
+                            Mostrar(i, mostrar, libro);
+                            contador++;
+                            mostrar = false;
+
+                        }
+                        else if (libro.Titulo.IndexOf(texto, StringComparison.OrdinalIgnoreCase) >= 0)
+                        {
+                            Mostrar(i, mostrar, libro);
+                            contador++;
+                            mostrar = false;
+
+                        }
+                        else if (libro.Autor.IndexOf(texto, StringComparison.OrdinalIgnoreCase) >= 0)
+                        {
+                            Mostrar(i, mostrar, libro);
+                            contador++;
+                            mostrar = false;
+
+                        }
+                        else if (libro.Pais.IndexOf(texto, StringComparison.OrdinalIgnoreCase) >= 0)
+                        {
+                            Mostrar(i, mostrar, libro);
+                            contador++;
+                            mostrar = false;
+
+                        }
+                        else if (libro.Idioma.IndexOf(texto, StringComparison.OrdinalIgnoreCase) >= 0)
+                        {
+                            Mostrar(i, mostrar, libro);
+                            contador++;
+                            mostrar = false;
+                        }
+                    }
+
+                    break;
+
+                default:
+                    Console.WriteLine("\nError, se debe seleccionar una de las opciones indicadas\n");
+                    Console.ReadLine();
+                    opcion_correcta = false;
+                    break;
+            }
+
+            if (contador != 0)
+            {
+                Console.WriteLine("\nPresiona una tecla para continuar...\n");
+                Console.ReadLine();
+                encontrado = true;
+
+            }
+            else if (opcion_correcta == true)
+            {
+                Console.WriteLine("\nNo se han encontrado coincidencias...\n");
+                Console.ReadLine();
+            }
+
+            return encontrado;
+
+        }
+
         private void GestionAdministracion(int ida, GestorBiblioteca gestorBiblioteca)
         {
             int opcionMenuAdministracion;
@@ -666,11 +899,12 @@ namespace ServicioBiblioteca
                         }
 
                         break;
-                    /*
-                        case 7:
-                            filtrarLibros(ida, gestorBiblioteca, true);
-                            break;
-                    */
+
+                    case 7:
+                        FiltrarLibros(ida, gestorBiblioteca, true);
+
+                        break;
+
                     case 8:
                         numLibros = FuncNLibros(-1, gestorBiblioteca);
 
@@ -764,7 +998,7 @@ namespace ServicioBiblioteca
                               do
                               {
                                   Console.WriteLine("¿Quiere sacar un libro de la biblioteca (s/n)? ");
-                                  siNo = teclado.next().charAt(0);
+                                  siNo = Convert.ToChar(Console.ReadLine());
                                   siNo = Character.toLowerCase(siNo);
                                   // Limpiar el buffer
                                   Console.ReadLine();
@@ -779,7 +1013,7 @@ namespace ServicioBiblioteca
                               {
 
                                   Console.WriteLine("Introduce la posicion del libro a solicitar su prestamo: ");
-                                  num = teclado.nextInt();
+                                  num = Convert.ToInt32(Console.ReadLine());
                                   // Limpiar el buffer
                                   Console.ReadLine();
                                   resultado = funcPrestar(num - 1, gestorBiblioteca);
@@ -817,7 +1051,7 @@ namespace ServicioBiblioteca
                               do
                               {
                                   Console.WriteLine("¿Quiere devolver un libro de la biblioteca (s/n)? ");
-                                  siNo = teclado.next().charAt(0);
+                                  siNo = Convert.ToChar(Console.ReadLine());
                                   siNo = Character.toLowerCase(siNo);
                                   // Limpiar el buffer
                                   Console.ReadLine();
@@ -832,7 +1066,7 @@ namespace ServicioBiblioteca
                               {
 
                                   Console.WriteLine("Introduce la posicion del libro a devolver: ");
-                                  num = teclado.nextInt();
+                                  num = Convert.ToInt32(Console.ReadLine());
                                   // Limpiar el buffer
                                   Console.ReadLine();
                                   resultado = funcDevolver(num - 1, gestorBiblioteca);
