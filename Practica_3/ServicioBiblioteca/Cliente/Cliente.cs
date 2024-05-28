@@ -985,12 +985,12 @@ namespace ServicioBiblioteca
 
                         break;
 
-                    /*  case 2:
-                          filtrarLibros(-2, gestorBiblioteca, false);
+                    case 2:
+                        FiltrarLibros(-2, gestorBiblioteca, false);
 
-                          break;
+                        break;
 
-                      case 3:
+                    /*  case 3:
                           res = filtrarLibros(-2, gestorBiblioteca, false);
 
                           if (res)
