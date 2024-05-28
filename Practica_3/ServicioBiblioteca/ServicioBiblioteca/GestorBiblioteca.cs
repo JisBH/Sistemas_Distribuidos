@@ -122,7 +122,52 @@ namespace ServicioBiblioteca
 
         public TLibro Descargar(int pIda, int pRepo, int pPos)
         {
-            throw new NotImplementedException();
+            TLibro libro, copiaLibro;
+
+            if (pRepo == -1)
+            {
+                if (pPos >= this.librosTodosRepositorios.Count || pPos < 0)
+                {
+                    return null;
+                }
+
+                libro = (TLibro)this.librosTodosRepositorios.ElementAt(pPos);
+                copiaLibro = new TLibro(libro.titulo, libro.autor, libro.pais, libro.idioma, libro.isbn, libro.anio, libro.disponibles, libro.prestados, libro.reservados);
+
+                if (pIda != this.idAdmin)
+                {
+                    copiaLibro.Reservados = 0;
+                    copiaLibro.Prestados = 0;
+                }
+
+                return copiaLibro;
+            }
+
+            if (pRepo >= this.repositoriosCargados.Count || pRepo < 0)
+
+            {
+                return null;
+            }
+
+            TDatosRepositorio datosRepositorio = this.repositoriosCargados.ElementAt(pRepo);
+
+            List<TLibro> librosRepositorios = datosRepositorio.RepositorioLibro.GetTodosLibros();
+
+            if (pPos < 0 || pPos >= librosRepositorios.Count)
+            {
+                return null;
+            }
+
+            libro = (TLibro)librosRepositorios.ElementAt(pPos);
+            copiaLibro = new TLibro(libro.titulo, libro.autor, libro.pais, libro.idioma, libro.isbn, libro.anio, libro.disponibles, libro.prestados, libro.reservados);
+
+            if (pIda != this.idAdmin)
+            {
+                copiaLibro.Reservados = 0;
+                copiaLibro.Prestados = 0;
+            }
+
+            return copiaLibro;
         }
 
         public bool Desconexion(int pIda)
@@ -151,7 +196,16 @@ namespace ServicioBiblioteca
 
         public int NLibros(int pRepo)
         {
-            throw new NotImplementedException();
+            if (pRepo == -1)
+            {
+                return this.librosTodosRepositorios.Count;
+            }
+
+            if (pRepo >= this.repositoriosCargados.Count || pRepo < 0)
+            {
+                return -1;
+            }
+            return this.repositoriosCargados.ElementAt(pRepo).RepositorioLibro.NumLibros();
         }
 
         public int NRepositorios(int pIda)

@@ -56,6 +56,7 @@ namespace ServicioBiblioteca
 
             Console.WriteLine(String.Format("{0,-5}{1,-18}{2,-4}{3,4}{4,4}{5,4}", Pos + 1, T, libro.Isbn, libro.Disponibles, libro.Prestados, libro.Reservados));
             Console.WriteLine(String.Format("     {0}{1}{2,-12}", A, PI, libro.Anio));
+            Console.WriteLine("\n");
         }
 
         private void Pausa()
@@ -114,7 +115,7 @@ namespace ServicioBiblioteca
             return salida;
         }
 
-        private int funcConexion(String contraseña, GestorBiblioteca gestorBilioteca)
+        private int FuncConexion(String contraseña, GestorBiblioteca gestorBilioteca)
         {
 
             int resultado;
@@ -133,7 +134,7 @@ namespace ServicioBiblioteca
             return resultado;
         }
 
-        private bool funcDesconexion(int ida, GestorBiblioteca gestorBilioteca)
+        private bool FuncDesconexion(int ida, GestorBiblioteca gestorBilioteca)
         {
 
             bool resultado;
@@ -152,7 +153,7 @@ namespace ServicioBiblioteca
             return resultado;
         }
 
-        private int funcAbrirRepositorio(int ida, GestorBiblioteca gestorBilioteca, String nombreRepositorio)
+        private int FuncAbrirRepositorio(int ida, GestorBiblioteca gestorBilioteca, String nombreRepositorio)
         {
 
             int resultado;
@@ -171,7 +172,39 @@ namespace ServicioBiblioteca
             return resultado;
         }
 
-        private void gestionAdministracion(int ida, GestorBiblioteca gestorBiblioteca)
+        private int FuncNLibros(int pRepo, GestorBiblioteca gestorBilioteca)
+        {
+
+            try
+            {
+                return gestorBilioteca.NLibros(pRepo);
+
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Se ha producido un error en la funcion NLibros");
+            }
+
+            return -3;
+        }
+
+        private TLibro FuncDescargar(int ida, GestorBiblioteca gestorBilioteca, int pRepo, int pPos)
+        {
+
+            try
+            {
+                return gestorBilioteca.Descargar(ida, pRepo, pPos);
+
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Se ha producido un error en la funcion descargar");
+            }
+
+            return null;
+        }
+
+        private void GestionAdministracion(int ida, GestorBiblioteca gestorBiblioteca)
         {
             int opcionMenuAdministracion;
             bool desconexion = false;
@@ -198,7 +231,7 @@ namespace ServicioBiblioteca
                     case 1:
                         Console.WriteLine("\n\nIntroduzca el nombre del repositorio a abrir: ");
                         nombreFichero = Console.ReadLine();
-                        resultado = funcAbrirRepositorio(ida, gestorBiblioteca, nombreFichero);
+                        resultado = FuncAbrirRepositorio(ida, gestorBiblioteca, nombreFichero);
 
                         if (resultado == -1)
                         {
@@ -487,30 +520,31 @@ namespace ServicioBiblioteca
                         case 7:
                             filtrarLibros(ida, gestorBiblioteca, true);
                             break;
-
-                        case 8:
-                            numLibros = funcNLibros(-1, gestorBiblioteca);
-
-                            for (int i = 0; i < numLibros; i++)
-                            {
-                                libro = funcDescargar(ida, gestorBiblioteca, -1, i);
-
-                                if (i == 0)
-                                {
-                                    Mostrar(i, true, libro);
-                                }
-                                else
-                                {
-                                    Mostrar(i, false, libro);
-                                }
-                            }
-
-                            break;
-
                     */
+                    case 8:
+                        numLibros = FuncNLibros(-1, gestorBiblioteca);
+
+                        for (int i = 0; i < numLibros; i++)
+                        {
+                            libro = FuncDescargar(ida, gestorBiblioteca, -1, i);
+
+                            if (i == 0)
+                            {
+                                Mostrar(i, true, libro);
+                            }
+                            else
+                            {
+                                Mostrar(i, false, libro);
+                            }
+                        }
+                        Pausa();
+
+                        break;
+
+
                     case 0:
 
-                        desconexion = funcDesconexion(ida, gestorBiblioteca);
+                        desconexion = FuncDesconexion(ida, gestorBiblioteca);
                         if (desconexion == true)
                         {
                             Console.WriteLine("Saliendo del menu de administracion\n");
@@ -526,7 +560,7 @@ namespace ServicioBiblioteca
             } while (opcionMenuAdministracion != 0 && desconexion != true);
         }
 
-        private void gestionPrincipal(GestorBiblioteca gestorBiblioteca)
+        private void GestionPrincipal(GestorBiblioteca gestorBiblioteca)
         {
             int opcionMenuPrincipal;
             String contraseña;
@@ -544,7 +578,7 @@ namespace ServicioBiblioteca
                         Console.WriteLine("");
                         Console.WriteLine("Por favor inserte la contraseña de administración: ");
                         contraseña = Console.ReadLine();
-                        resultado = funcConexion(contraseña, gestorBiblioteca);
+                        resultado = FuncConexion(contraseña, gestorBiblioteca);
 
                         if (resultado == -1)
                         {
@@ -562,7 +596,7 @@ namespace ServicioBiblioteca
                         {
                             Console.WriteLine("\n*** Contraseña correcta, puede acceder al menú de administración ***\n");
                             Pausa();
-                            gestionAdministracion(resultado, gestorBiblioteca);
+                            GestionAdministracion(resultado, gestorBiblioteca);
                         }
 
                         break;
@@ -721,7 +755,7 @@ namespace ServicioBiblioteca
                 GestorBiblioteca gestorBiblioteca = (GestorBiblioteca)Activator.GetObject(typeof(GestorBiblioteca),
                 "tcp://" + host + ":" + puerto + "/GestorBiblioteca");
 
-                c.gestionPrincipal(gestorBiblioteca);
+                c.GestionPrincipal(gestorBiblioteca);
 
             }
             catch (Exception ex)

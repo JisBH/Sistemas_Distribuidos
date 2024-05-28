@@ -47,7 +47,7 @@ namespace ServicioBiblioteca
 
         public int NumLibros()
         {
-            return libros.Capacity;
+            return libros.Count;
         }
 
 
