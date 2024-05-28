@@ -264,7 +264,53 @@ namespace ServicioBiblioteca
 
         public int Devolver(int pPos)
         {
-            throw new NotImplementedException();
+
+            if (pPos < 0 || pPos >= this.librosTodosRepositorios.Count)
+            {
+                return -1;
+            }
+
+            TLibro libro = this.librosTodosRepositorios.ElementAt(pPos);
+
+            //Codigo para ordenar el repositorio que contiene el libro
+            int i = 0;
+            bool encontrado = false;
+
+            while (i < this.repositoriosCargados.Count && !encontrado)
+            {
+                TDatosRepositorio datosRepositorio = this.repositoriosCargados.ElementAt(i);
+
+                if (datosRepositorio.RepositorioLibro.GetLibroPorIsbn(libro.Isbn) != null)
+                {
+                    encontrado = true;
+
+                }
+                else
+                {
+                    i++;
+                }
+            }
+            // i tiene el repositorio en el que esta el libro
+            // Ordenamos el repositorio
+            IComparer<TLibro> comp = new ComparadorLibro(this.campoOrdenacion);
+
+            if (libro.Reservados == 0 && libro.Prestados > 0)
+            {
+                libro.Prestados--;
+                libro.Disponibles++;
+                this.repositoriosCargados.ElementAt(i).RepositorioLibro.GetTodosLibros().Sort(comp);
+                return 1;
+            }
+
+            if (libro.Reservados > 0 && libro.Prestados > 0)
+            {
+                libro.Reservados--;
+                this.repositoriosCargados.ElementAt(i).RepositorioLibro.GetTodosLibros().Sort(comp);
+                return 0;
+            }
+
+            return 2;
+
         }
 
         public int GuardarRepositorio(int pIda, int pRepo)
