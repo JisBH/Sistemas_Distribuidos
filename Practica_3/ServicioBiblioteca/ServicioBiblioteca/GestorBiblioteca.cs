@@ -82,12 +82,78 @@ namespace ServicioBiblioteca
 
         public int Buscar(int pIda, string pIsbn)
         {
-            throw new NotImplementedException();
+            if (pIda != this.idAdmin)
+            {
+                return -2;
+            }
+
+            for (int i = 0; i < this.librosTodosRepositorios.Count; i++)
+            {
+                TLibro libro = this.librosTodosRepositorios.ElementAt(i);
+
+                if (pIsbn.Equals(libro.Isbn))
+                {
+                    return i;
+                }
+            }
+
+            return -1;
         }
 
         public int Comprar(int pIda, string pIsbn, int pNoLibros)
         {
-            throw new NotImplementedException();
+            if (pIda != this.idAdmin)
+            {
+                return -1;
+            }
+
+            int posLibro = Buscar(pIda, pIsbn);
+
+            if (posLibro == -1)
+            {
+                return 0;
+            }
+
+            TLibro libro = this.librosTodosRepositorios.ElementAt(posLibro);
+            libro.Disponibles += pNoLibros;
+
+            if (libro.Disponibles >= libro.Reservados)
+            {
+                libro.Disponibles -= libro.Reservados;
+                libro.Prestados += libro.Reservados;
+                libro.Reservados = 0;
+            }
+            else
+            {
+                libro.Reservados -= libro.Disponibles;
+                libro.Prestados += libro.Disponibles;
+                libro.Disponibles = 0;
+            }
+
+            //Codigo para ordenar el repositorio que contiene el libro
+            int i = 0;
+            bool encontrado = false;
+
+            while (i < this.repositoriosCargados.Count && !encontrado)
+            {
+                TDatosRepositorio datosRepositorio = this.repositoriosCargados.ElementAt(i);
+
+                if (datosRepositorio.RepositorioLibro.GetLibroPorIsbn(pIsbn) != null)
+                {
+                    encontrado = true;
+
+                }
+                else
+                {
+                    i++;
+                }
+            }
+            // i tiene el repositorio en el que esta el libro
+            // Ordenamos el repositorio
+            IComparer<TLibro> comp = new ComparadorLibro(this.campoOrdenacion);
+            this.repositoriosCargados.ElementAt(i).RepositorioLibro.GetTodosLibros().Sort(comp);
+
+            return 1;
         }
 
         public int Conexion(string pPasswd)
