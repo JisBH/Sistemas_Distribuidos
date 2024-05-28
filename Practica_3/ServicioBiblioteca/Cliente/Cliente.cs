@@ -204,6 +204,21 @@ namespace ServicioBiblioteca
             return null;
         }
 
+        private bool FuncOrdenar(int pIda, GestorBibliotecaIntf gestorBilioteca, int pCampo)
+        {
+
+            try
+            {
+                return gestorBilioteca.Ordenar(pIda, pCampo);
+
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Se ha producido un error en la funcion ordenar");
+            }
+            return false;
+        }
+
         private void GestionAdministracion(int ida, GestorBiblioteca gestorBiblioteca)
         {
             int opcionMenuAdministracion;
@@ -484,39 +499,36 @@ namespace ServicioBiblioteca
                             }
 
                             break;
+                    */
+                    case 6:
+                        Console.WriteLine("\nCódigo de Ordenación");
+                        Console.WriteLine("0.- Por ISBN");
+                        Console.WriteLine("1.- Por Título");
+                        Console.WriteLine("2.- Por Autor");
+                        Console.WriteLine("3.- Por Año");
+                        Console.WriteLine("4.- Por País");
+                        Console.WriteLine("5.- Por Idioma");
+                        Console.WriteLine("6.- Por nº de libros disponibles");
+                        Console.WriteLine("7.- Por nº de libros prestados");
+                        Console.WriteLine("8.- Por nº de libros en espera");
 
-                        case 6:
-                            Console.WriteLine("\nCódigo de Ordenación");
-                            Console.WriteLine("0.- Por ISBN");
-                            Console.WriteLine("1.- Por Título");
-                            Console.WriteLine("2.- Por Autor");
-                            Console.WriteLine("3.- Por Año");
-                            Console.WriteLine("4.- Por País");
-                            Console.WriteLine("5.- Por Idioma");
-                            Console.WriteLine("6.- Por nº de libros disponibles");
-                            Console.WriteLine("7.- Por nº de libros prestados");
-                            Console.WriteLine("8.- Por nº de libros en espera");
+                        Console.WriteLine("\nIntroduce código:");
+                        opcion = Convert.ToInt32(Console.ReadLine());
+                        res = FuncOrdenar(ida, gestorBiblioteca, opcion);
 
-                            Console.WriteLine("Introduce código:");
-                            opcion = teclado.nextInt();
-                            res = funcOrdenar(ida, gestorBiblioteca, opcion);
-                            teclado.nextLine();
+                        if (res)
+                        {
+                            Console.WriteLine("\n*** La biblioteca ha sido ordenada correctamente.**");
+                            Pausa();
+                        }
+                        else
+                        {
+                            Console.WriteLine("\n\nError, no se ha podido ordenar la biblioteca");
+                            Pausa();
+                        }
 
-                            if (res)
-                            {
-                                Console.WriteLine("*** La biblioteca ha sido ordenada correctamente.**");
-                                Console.WriteLine("\nPresiona una tecla para continuar...");
-                                teclado.nextLine();
-                            }
-                            else
-                            {
-                                Console.WriteLine("\n\nError, no se ha podido ordenar la biblioteca");
-                                Console.WriteLine("\nPresiona una tecla para continuar...");
-                                teclado.nextLine();
-                            }
-
-                            break;
-
+                        break;
+                    /*
                         case 7:
                             filtrarLibros(ida, gestorBiblioteca, true);
                             break;
@@ -547,12 +559,12 @@ namespace ServicioBiblioteca
                         desconexion = FuncDesconexion(ida, gestorBiblioteca);
                         if (desconexion == true)
                         {
-                            Console.WriteLine("Saliendo del menu de administracion\n");
+                            Console.WriteLine("\nSaliendo del menu de administracion\n");
 
                         }
                         else
                         {
-                            Console.WriteLine("Error en la desconexion\n");
+                            Console.WriteLine("\nError en la desconexion\n");
                         }
 
                         break;
@@ -720,7 +732,7 @@ namespace ServicioBiblioteca
                           break;
                     */
                     case 0:
-                        Console.WriteLine("Saliendo del menu principal");
+                        Console.WriteLine("\nSaliendo del menu principal");
                         Pausa();
 
                         break;

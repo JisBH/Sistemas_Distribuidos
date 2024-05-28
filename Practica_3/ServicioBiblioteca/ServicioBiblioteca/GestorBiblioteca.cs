@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -65,7 +66,7 @@ namespace ServicioBiblioteca
                 }
 
                 this.repositoriosCargados.Add(datosRepositorio);
-                // Ordenar(pIda, this.campoOrdenacion);
+                Ordenar(pIda, this.campoOrdenacion);
 
             }
             catch (Exception ex)
@@ -220,7 +221,28 @@ namespace ServicioBiblioteca
 
         public bool Ordenar(int pIda, int pCampo)
         {
-            throw new NotImplementedException();
+            if (pIda != this.idAdmin)
+            {
+                return false;
+            }
+
+            if (pCampo < 0 || pCampo > 8)
+            {
+                return false;
+            }
+
+            IComparer<TLibro> comp = new ComparadorLibro(pCampo);
+
+            this.librosTodosRepositorios.Sort(comp);
+
+            foreach (TDatosRepositorio repositorio in this.repositoriosCargados)
+            {
+                repositorio.RepositorioLibro.GetTodosLibros().Sort(comp);
+            }
+
+            this.campoOrdenacion = pCampo;
+
+            return true;
         }
 
         public int Prestar(int pPos)

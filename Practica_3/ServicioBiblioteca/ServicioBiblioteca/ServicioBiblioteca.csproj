@@ -41,6 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ComparadorLibro.cs" />
     <Compile Include="ListRepositorioLibro.cs" />
     <Compile Include="GestorBibliotecaIntf.cs" />
     <Compile Include="GestorBiblioteca.cs" />
