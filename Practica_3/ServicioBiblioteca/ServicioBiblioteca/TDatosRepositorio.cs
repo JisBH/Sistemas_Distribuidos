@@ -13,6 +13,8 @@ namespace ServicioBiblioteca
         private String nombreRepositorio;
         private String direccionRepositorio;
         private String rutaRepositorio;
+
+        [NonSerialized]
         private RepositorioLibroIntf repositorioLibro;
 
         public TDatosRepositorio()
