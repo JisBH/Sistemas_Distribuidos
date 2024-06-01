@@ -4,3 +4,4 @@ C:\Users\Usuario\Documents\Ingeniería Informática\4º Curso\Segundo cuatrimest
 C:\Users\Usuario\Documents\Ingeniería Informática\4º Curso\Segundo cuatrimestre\Sistemas_Distribuidos\Practica_4\ServicioWebBilioteca\ServicioWebBilioteca\bin\Debug\ServicioWebBilioteca.dll.config
 C:\Users\Usuario\Documents\Ingeniería Informática\4º Curso\Segundo cuatrimestre\Sistemas_Distribuidos\Practica_4\ServicioWebBilioteca\ServicioWebBilioteca\bin\Debug\ServicioWebBilioteca.dll
 C:\Users\Usuario\Documents\Ingeniería Informática\4º Curso\Segundo cuatrimestre\Sistemas_Distribuidos\Practica_4\ServicioWebBilioteca\ServicioWebBilioteca\bin\Debug\ServicioWebBilioteca.pdb
+C:\Users\Usuario\Documents\Ingeniería Informática\4º Curso\Segundo cuatrimestre\Sistemas_Distribuidos\Practica_4\ServicioWebBilioteca\ServicioWebBilioteca\obj\Debug\ServicioWebBiblioteca.csprojAssemblyReference.cache
