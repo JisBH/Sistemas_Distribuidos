@@ -1,0 +1,305 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:tns="http://tempuri.org/" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="GestorBiblioteca" targetNamespace="http://tempuri.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <xsd:schema targetNamespace="http://tempuri.org/Imports">
+      <xsd:import schemaLocation="http://localhost:8733/Design_Time_Addresses/ServicioWebBilioteca/Service1/?xsd=xsd0" namespace="http://tempuri.org/" />
+      <xsd:import schemaLocation="http://localhost:8733/Design_Time_Addresses/ServicioWebBilioteca/Service1/?xsd=xsd1" namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+      <xsd:import schemaLocation="http://localhost:8733/Design_Time_Addresses/ServicioWebBilioteca/Service1/?xsd=xsd2" namespace="http://schemas.datacontract.org/2004/07/ServicioWebBiblioteca" />
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="IGestorBiblioteca_Conexion_InputMessage">
+    <wsdl:part name="parameters" element="tns:Conexion" />
+  </wsdl:message>
+  <wsdl:message name="IGestorBiblioteca_Conexion_OutputMessage">
+    <wsdl:part name="parameters" element="tns:ConexionResponse" />
+  </wsdl:message>
+  <wsdl:message name="IGestorBiblioteca_Desconexion_InputMessage">
+    <wsdl:part name="parameters" element="tns:Desconexion" />
+  </wsdl:message>
+  <wsdl:message name="IGestorBiblioteca_Desconexion_OutputMessage">
+    <wsdl:part name="parameters" element="tns:DesconexionResponse" />
+  </wsdl:message>
+  <wsdl:message name="IGestorBiblioteca_NRepositorios_InputMessage">
+    <wsdl:part name="parameters" element="tns:NRepositorios" />
+  </wsdl:message>
+  <wsdl:message name="IGestorBiblioteca_NRepositorios_OutputMessage">
+    <wsdl:part name="parameters" element="tns:NRepositoriosResponse" />
+  </wsdl:message>
+  <wsdl:message name="IGestorBiblioteca_DatosRepositorio_InputMessage">
+    <wsdl:part name="parameters" element="tns:DatosRepositorio" />
+  </wsdl:message>
+  <wsdl:message name="IGestorBiblioteca_DatosRepositorio_OutputMessage">
+    <wsdl:part name="parameters" element="tns:DatosRepositorioResponse" />
+  </wsdl:message>
+  <wsdl:message name="IGestorBiblioteca_AbrirRepositorio_InputMessage">
+    <wsdl:part name="parameters" element="tns:AbrirRepositorio" />
+  </wsdl:message>
+  <wsdl:message name="IGestorBiblioteca_AbrirRepositorio_OutputMessage">
+    <wsdl:part name="parameters" element="tns:AbrirRepositorioResponse" />
+  </wsdl:message>
+  <wsdl:message name="IGestorBiblioteca_GuardarRepositorio_InputMessage">
+    <wsdl:part name="parameters" element="tns:GuardarRepositorio" />
+  </wsdl:message>
+  <wsdl:message name="IGestorBiblioteca_GuardarRepositorio_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GuardarRepositorioResponse" />
+  </wsdl:message>
+  <wsdl:message name="IGestorBiblioteca_NuevoLibro_InputMessage">
+    <wsdl:part name="parameters" element="tns:NuevoLibro" />
+  </wsdl:message>
+  <wsdl:message name="IGestorBiblioteca_NuevoLibro_OutputMessage">
+    <wsdl:part name="parameters" element="tns:NuevoLibroResponse" />
+  </wsdl:message>
+  <wsdl:message name="IGestorBiblioteca_Comprar_InputMessage">
+    <wsdl:part name="parameters" element="tns:Comprar" />
+  </wsdl:message>
+  <wsdl:message name="IGestorBiblioteca_Comprar_OutputMessage">
+    <wsdl:part name="parameters" element="tns:ComprarResponse" />
+  </wsdl:message>
+  <wsdl:message name="IGestorBiblioteca_Retirar_InputMessage">
+    <wsdl:part name="parameters" element="tns:Retirar" />
+  </wsdl:message>
+  <wsdl:message name="IGestorBiblioteca_Retirar_OutputMessage">
+    <wsdl:part name="parameters" element="tns:RetirarResponse" />
+  </wsdl:message>
+  <wsdl:message name="IGestorBiblioteca_Ordenar_InputMessage">
+    <wsdl:part name="parameters" element="tns:Ordenar" />
+  </wsdl:message>
+  <wsdl:message name="IGestorBiblioteca_Ordenar_OutputMessage">
+    <wsdl:part name="parameters" element="tns:OrdenarResponse" />
+  </wsdl:message>
+  <wsdl:message name="IGestorBiblioteca_NLibros_InputMessage">
+    <wsdl:part name="parameters" element="tns:NLibros" />
+  </wsdl:message>
+  <wsdl:message name="IGestorBiblioteca_NLibros_OutputMessage">
+    <wsdl:part name="parameters" element="tns:NLibrosResponse" />
+  </wsdl:message>
+  <wsdl:message name="IGestorBiblioteca_Buscar_InputMessage">
+    <wsdl:part name="parameters" element="tns:Buscar" />
+  </wsdl:message>
+  <wsdl:message name="IGestorBiblioteca_Buscar_OutputMessage">
+    <wsdl:part name="parameters" element="tns:BuscarResponse" />
+  </wsdl:message>
+  <wsdl:message name="IGestorBiblioteca_Descargar_InputMessage">
+    <wsdl:part name="parameters" element="tns:Descargar" />
+  </wsdl:message>
+  <wsdl:message name="IGestorBiblioteca_Descargar_OutputMessage">
+    <wsdl:part name="parameters" element="tns:DescargarResponse" />
+  </wsdl:message>
+  <wsdl:message name="IGestorBiblioteca_Prestar_InputMessage">
+    <wsdl:part name="parameters" element="tns:Prestar" />
+  </wsdl:message>
+  <wsdl:message name="IGestorBiblioteca_Prestar_OutputMessage">
+    <wsdl:part name="parameters" element="tns:PrestarResponse" />
+  </wsdl:message>
+  <wsdl:message name="IGestorBiblioteca_Devolver_InputMessage">
+    <wsdl:part name="parameters" element="tns:Devolver" />
+  </wsdl:message>
+  <wsdl:message name="IGestorBiblioteca_Devolver_OutputMessage">
+    <wsdl:part name="parameters" element="tns:DevolverResponse" />
+  </wsdl:message>
+  <wsdl:portType name="IGestorBiblioteca">
+    <wsdl:operation name="Conexion">
+      <wsdl:input wsaw:Action="http://tempuri.org/IGestorBiblioteca/Conexion" message="tns:IGestorBiblioteca_Conexion_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IGestorBiblioteca/ConexionResponse" message="tns:IGestorBiblioteca_Conexion_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="Desconexion">
+      <wsdl:input wsaw:Action="http://tempuri.org/IGestorBiblioteca/Desconexion" message="tns:IGestorBiblioteca_Desconexion_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IGestorBiblioteca/DesconexionResponse" message="tns:IGestorBiblioteca_Desconexion_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="NRepositorios">
+      <wsdl:input wsaw:Action="http://tempuri.org/IGestorBiblioteca/NRepositorios" message="tns:IGestorBiblioteca_NRepositorios_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IGestorBiblioteca/NRepositoriosResponse" message="tns:IGestorBiblioteca_NRepositorios_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="DatosRepositorio">
+      <wsdl:input wsaw:Action="http://tempuri.org/IGestorBiblioteca/DatosRepositorio" message="tns:IGestorBiblioteca_DatosRepositorio_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IGestorBiblioteca/DatosRepositorioResponse" message="tns:IGestorBiblioteca_DatosRepositorio_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="AbrirRepositorio">
+      <wsdl:input wsaw:Action="http://tempuri.org/IGestorBiblioteca/AbrirRepositorio" message="tns:IGestorBiblioteca_AbrirRepositorio_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IGestorBiblioteca/AbrirRepositorioResponse" message="tns:IGestorBiblioteca_AbrirRepositorio_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GuardarRepositorio">
+      <wsdl:input wsaw:Action="http://tempuri.org/IGestorBiblioteca/GuardarRepositorio" message="tns:IGestorBiblioteca_GuardarRepositorio_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IGestorBiblioteca/GuardarRepositorioResponse" message="tns:IGestorBiblioteca_GuardarRepositorio_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="NuevoLibro">
+      <wsdl:input wsaw:Action="http://tempuri.org/IGestorBiblioteca/NuevoLibro" message="tns:IGestorBiblioteca_NuevoLibro_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IGestorBiblioteca/NuevoLibroResponse" message="tns:IGestorBiblioteca_NuevoLibro_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="Comprar">
+      <wsdl:input wsaw:Action="http://tempuri.org/IGestorBiblioteca/Comprar" message="tns:IGestorBiblioteca_Comprar_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IGestorBiblioteca/ComprarResponse" message="tns:IGestorBiblioteca_Comprar_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="Retirar">
+      <wsdl:input wsaw:Action="http://tempuri.org/IGestorBiblioteca/Retirar" message="tns:IGestorBiblioteca_Retirar_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IGestorBiblioteca/RetirarResponse" message="tns:IGestorBiblioteca_Retirar_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="Ordenar">
+      <wsdl:input wsaw:Action="http://tempuri.org/IGestorBiblioteca/Ordenar" message="tns:IGestorBiblioteca_Ordenar_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IGestorBiblioteca/OrdenarResponse" message="tns:IGestorBiblioteca_Ordenar_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="NLibros">
+      <wsdl:input wsaw:Action="http://tempuri.org/IGestorBiblioteca/NLibros" message="tns:IGestorBiblioteca_NLibros_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IGestorBiblioteca/NLibrosResponse" message="tns:IGestorBiblioteca_NLibros_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="Buscar">
+      <wsdl:input wsaw:Action="http://tempuri.org/IGestorBiblioteca/Buscar" message="tns:IGestorBiblioteca_Buscar_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IGestorBiblioteca/BuscarResponse" message="tns:IGestorBiblioteca_Buscar_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="Descargar">
+      <wsdl:input wsaw:Action="http://tempuri.org/IGestorBiblioteca/Descargar" message="tns:IGestorBiblioteca_Descargar_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IGestorBiblioteca/DescargarResponse" message="tns:IGestorBiblioteca_Descargar_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="Prestar">
+      <wsdl:input wsaw:Action="http://tempuri.org/IGestorBiblioteca/Prestar" message="tns:IGestorBiblioteca_Prestar_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IGestorBiblioteca/PrestarResponse" message="tns:IGestorBiblioteca_Prestar_OutputMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="Devolver">
+      <wsdl:input wsaw:Action="http://tempuri.org/IGestorBiblioteca/Devolver" message="tns:IGestorBiblioteca_Devolver_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/IGestorBiblioteca/DevolverResponse" message="tns:IGestorBiblioteca_Devolver_OutputMessage" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="BasicHttpBinding_IGestorBiblioteca" type="tns:IGestorBiblioteca">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="Conexion">
+      <soap:operation soapAction="http://tempuri.org/IGestorBiblioteca/Conexion" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Desconexion">
+      <soap:operation soapAction="http://tempuri.org/IGestorBiblioteca/Desconexion" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="NRepositorios">
+      <soap:operation soapAction="http://tempuri.org/IGestorBiblioteca/NRepositorios" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="DatosRepositorio">
+      <soap:operation soapAction="http://tempuri.org/IGestorBiblioteca/DatosRepositorio" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="AbrirRepositorio">
+      <soap:operation soapAction="http://tempuri.org/IGestorBiblioteca/AbrirRepositorio" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GuardarRepositorio">
+      <soap:operation soapAction="http://tempuri.org/IGestorBiblioteca/GuardarRepositorio" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="NuevoLibro">
+      <soap:operation soapAction="http://tempuri.org/IGestorBiblioteca/NuevoLibro" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Comprar">
+      <soap:operation soapAction="http://tempuri.org/IGestorBiblioteca/Comprar" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Retirar">
+      <soap:operation soapAction="http://tempuri.org/IGestorBiblioteca/Retirar" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Ordenar">
+      <soap:operation soapAction="http://tempuri.org/IGestorBiblioteca/Ordenar" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="NLibros">
+      <soap:operation soapAction="http://tempuri.org/IGestorBiblioteca/NLibros" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Buscar">
+      <soap:operation soapAction="http://tempuri.org/IGestorBiblioteca/Buscar" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Descargar">
+      <soap:operation soapAction="http://tempuri.org/IGestorBiblioteca/Descargar" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Prestar">
+      <soap:operation soapAction="http://tempuri.org/IGestorBiblioteca/Prestar" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Devolver">
+      <soap:operation soapAction="http://tempuri.org/IGestorBiblioteca/Devolver" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="GestorBiblioteca">
+    <wsdl:port name="BasicHttpBinding_IGestorBiblioteca" binding="tns:BasicHttpBinding_IGestorBiblioteca">
+      <soap:address location="http://localhost:8733/Design_Time_Addresses/ServicioWebBilioteca/Service1/" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/ServicioWebBiblioteca" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/ServicioWebBiblioteca" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:complexType name="TDatosRepositorio">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="DireccionRepositorio" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="NombreRepositorio" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="NumeroLibros" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="TDatosRepositorio" nillable="true" type="tns:TDatosRepositorio" />
+  <xs:complexType name="TLibro">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Anio" type="xs:int" />
+      <xs:element minOccurs="0" name="Autor" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Disponibles" type="xs:int" />
+      <xs:element minOccurs="0" name="Idioma" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Isbn" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Pais" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Prestados" type="xs:int" />
+      <xs:element minOccurs="0" name="Reservados" type="xs:int" />
+      <xs:element minOccurs="0" name="Titulo" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="TLibro" nillable="true" type="tns:TLibro" />
+</xs:schema>
